@@ -18,7 +18,9 @@ public class MainQuestData {
 
     private SubQuestData[] subQuests;
     private List<TalkData> talks;
-    private long[] preloadLuaList;
+    // Some 4.8 resources contain unsigned 64-bit values that overflow Java signed long.
+    // Keep them as strings because the server currently does not operate on this field.
+    private String[] preloadLuaList;
 
     public int getId() {
         return id;
