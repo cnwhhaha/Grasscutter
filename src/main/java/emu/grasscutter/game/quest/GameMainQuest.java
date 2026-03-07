@@ -412,11 +412,8 @@ public class GameMainQuest {
         try {
             List<GameQuest> subQuestsWithCond =
                     getChildQuests().values().stream()
-                            // There are subQuests with no acceptCond, but can be finished (example: 35104)
-                            .filter(
-                                    p ->
-                                            p.getState() == QuestState.QUEST_STATE_UNFINISHED
-                                                    && p.getQuestData().getAcceptCond() != null)
+                            // There are subQuests with no acceptCond, but can still be finished
+                            .filter(p -> p.getState() == QuestState.QUEST_STATE_UNFINISHED)
                             .filter(
                                     p ->
                                             p.getQuestData().getFinishCond().stream()

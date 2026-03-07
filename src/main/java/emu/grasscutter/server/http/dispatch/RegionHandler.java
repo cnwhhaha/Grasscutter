@@ -237,8 +237,21 @@ public final class RegionHandler implements Router {
             if (region != null) regionData = region.getBase64();
         }
 
-        var clientVersion = versionName.replaceAll(Pattern.compile("[a-zA-Z]").pattern(), "");
+        var fallbackVersion =
+                "%d.%d.%d".formatted(
+                        GameConstants.VERSION_PARTS[0],
+                        GameConstants.VERSION_PARTS[1],
+                        GameConstants.VERSION_PARTS[2]);
+        var clientVersion =
+                (versionName == null ? fallbackVersion : versionName)
+                        .replaceAll(Pattern.compile("[a-zA-Z]").pattern(), "");
         var versionCode = clientVersion.split("\\.");
+
+        if (versionCode.length < 3) {
+            clientVersion = fallbackVersion;
+            versionCode = clientVersion.split("\\.");
+        }
+
         var versionMajor = Integer.parseInt(versionCode[0]);
         var versionMinor = Integer.parseInt(versionCode[1]);
         var versionFix = Integer.parseInt(versionCode[2]);
@@ -258,7 +271,13 @@ public final class RegionHandler implements Router {
                 // when miHoYo is desperate and fucks up big time.
                 ) { // Reject clients when there is a version mismatch
 
-                    boolean updateClient = GameConstants.VERSION.compareTo(clientVersion) > 0;
+                    boolean updateClient =
+                            versionMajor < GameConstants.VERSION_PARTS[0]
+                                    || (versionMajor == GameConstants.VERSION_PARTS[0]
+                                            && versionMinor < GameConstants.VERSION_PARTS[1])
+                                    || (versionMajor == GameConstants.VERSION_PARTS[0]
+                                            && versionMinor == GameConstants.VERSION_PARTS[1]
+                                            && versionFix < GameConstants.VERSION_PARTS[2]);
 
                     QueryCurrRegionHttpRsp rsp =
                             QueryCurrRegionHttpRsp.newBuilder()

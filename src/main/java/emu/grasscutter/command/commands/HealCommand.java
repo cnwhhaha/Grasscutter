@@ -22,16 +22,17 @@ public final class HealCommand implements CommandHandler {
                 .getActiveTeam()
                 .forEach(
                         entity -> {
-                            boolean isAlive = entity.isAlive();
+                            var wasDead = !entity.isAlive();
                             entity.setFightProperty(
                                     FightProperty.FIGHT_PROP_CUR_HP,
                                     entity.getFightProperty(FightProperty.FIGHT_PROP_MAX_HP));
+
                             entity
                                     .getWorld()
                                     .broadcastPacket(
                                             new PacketAvatarFightPropUpdateNotify(
                                                     entity.getAvatar(), FightProperty.FIGHT_PROP_CUR_HP));
-                            if (!isAlive) {
+                            if (wasDead) {
                                 entity
                                         .getWorld()
                                         .broadcastPacket(new PacketAvatarLifeStateChangeNotify(entity.getAvatar()));
