@@ -85,10 +85,18 @@ public abstract class GameEntity {
 
     public void setFightProperty(FightProperty prop, float value) {
         this.getFightProperties().put(prop.getId(), value);
+
+        if (prop == FightProperty.FIGHT_PROP_CUR_HP) {
+            this.isDead = value <= 0f;
+        }
     }
 
     public void setFightProperty(int id, float value) {
         this.getFightProperties().put(id, value);
+
+        if (id == FightProperty.FIGHT_PROP_CUR_HP.getId()) {
+            this.isDead = value <= 0f;
+        }
     }
 
     public void addFightProperty(FightProperty prop, float value) {
