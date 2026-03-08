@@ -137,7 +137,10 @@ public final class GameServer extends KcpServer implements Iterable<Player> {
         channelConfig.setSndwnd(256);
         channelConfig.setRcvwnd(256);
         channelConfig.setTimeoutMillis(30 * 1000); // 30s
-        channelConfig.setUseConvChannel(true);
+        // Some recent clients (including 4.8 variants) may renegotiate/reuse conversation ids
+        // during connection bootstrap. Disabling strict conv-channel binding avoids immediate
+        // KCP "Conv inconsistency" disconnect loops after entering the world.
+        channelConfig.setUseConvChannel(false);
         channelConfig.setAckNoDelay(false);
 
         this.init(GameSessionManager.getListener(), channelConfig, address);
