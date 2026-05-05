@@ -1,0 +1,49 @@
+15:21:08 <INFO:Grasscutter> 加载完成！输入 "help" 查看命令列表
+15:22:49 <INFO:RegionHandler> [Dispatch] Client [0:0:0:0:0:0:0:1] request: query_region_list
+15:22:49 <INFO:DefaultAuthenticators$TokenAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 正在尝试通过 token 登录
+15:22:49 <INFO:DefaultAuthenticators$TokenAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 已通过 token 登录，UID 为 10001
+15:22:49 <INFO:DefaultAuthenticators$SessionKeyAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 成功交换 token
+15:22:49 <INFO:RegionHandler> Client 127.0.0.1 request: query_cur_region/os_usa
+15:23:03 <INFO:GameSession> 客户端 /127.0.0.1:52746 已连接
+15:23:03 <INFO:GameSession> 客户端 /127.0.0.1:52746 已断开连接
+> java.io.IOException: Conv inconsistency
+        at kcp.highway.Ukcp.input(Ukcp.java:225)
+        at kcp.highway.Ukcp.input(Ukcp.java:211)
+        at kcp.highway.ReadTask.execute(ReadTask.java:42)
+        at kcp.highway.threadPool.netty.NettyMessageExecutor.lambda$execute$0(NettyMessageExecutor.java:35)
+        at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:174)
+        at io.netty.channel.DefaultEventLoop.run(DefaultEventLoop.java:54)
+        at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+        at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+        at java.base/java.lang.Thread.run(Thread.java:842)
+15:23:34 <INFO:GameSession> 客户端 /127.0.0.1:56527 已连接
+15:23:57 <INFO:GameSession> 客户端 /127.0.0.1:56527 已断开连接
+> java.io.IOException: Conv inconsistency
+        at kcp.highway.Ukcp.input(Ukcp.java:225)
+        at kcp.highway.Ukcp.input(Ukcp.java:211)
+        at kcp.highway.ReadTask.execute(ReadTask.java:42)
+        at kcp.highway.threadPool.netty.NettyMessageExecutor.lambda$execute$0(NettyMessageExecutor.java:35)
+        at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:174)
+        at io.netty.channel.DefaultEventLoop.run(DefaultEventLoop.java:54)
+        at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+        at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+        at java.base/java.lang.Thread.run(Thread.java:842)
+15:24:05 <INFO:GameSession> 客户端 /127.0.0.1:59311 已连接
+15:24:21 <INFO:GameSession> 客户端 /127.0.0.1:51904 已连接
+15:24:35 <INFO:GameSession> 客户端 /127.0.0.1:51904 已断开连接
+> java.io.IOException: Conv inconsistency
+        at kcp.highway.Ukcp.input(Ukcp.java:225)
+        at kcp.highway.Ukcp.input(Ukcp.java:211)
+        at kcp.highway.ReadTask.execute(ReadTask.java:42)
+        at kcp.highway.threadPool.netty.NettyMessageExecutor.lambda$execute$0(NettyMessageExecutor.java:35)
+        at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:174)
+        at io.netty.channel.DefaultEventLoop.run(DefaultEventLoop.java:54)
+        at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+        at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+        at java.base/java.lang.Thread.run(Thread.java:842)
+15:24:44 <INFO:GameSession> 客户端 /127.0.0.1:59311 已断开连接
+15:24:45 <INFO:RegionHandler> [Dispatch] Client [0:0:0:0:0:0:0:1] request: query_region_list
+15:24:45 <INFO:DefaultAuthenticators$TokenAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 正在尝试通过 token 登录
+15:24:45 <INFO:DefaultAuthenticators$TokenAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 已通过 token 登录，UID 为 10001
+15:24:45 <INFO:DefaultAuthenticators$SessionKeyAuthenticator> [Dispatch] 客户端 [0:0:0:0:0:0:0:1] 成功交换 token
+15:24:45 <INFO:RegionHandler> Client 127.0.0.1 request: query_cur_region/os_usa
