@@ -179,6 +179,23 @@ public class GameSession implements GameSessionManager.KcpChannel {
             default -> {}
         }
 
+        // Dump outgoing payload for proto debugging
+        try {
+            java.nio.file.Path dumpDir = java.nio.file.Paths.get("./payload_dump");
+            java.nio.file.Files.createDirectories(dumpDir);
+            String fname = String.format("send_%d_%s_%d.bin",
+                packet.getOpcode(), opcodeName, System.currentTimeMillis());
+            java.nio.file.Path dumpFile = dumpDir.resolve(fname);
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(dumpFile.toFile());
+            byte[] sendData = packet.getData();
+            fos.write(java.nio.ByteBuffer.allocate(4).putInt(packet.getOpcode()).array());
+            fos.write(java.nio.ByteBuffer.allocate(4).putInt(sendData != null ? sendData.length : 0).array());
+            if (sendData != null && sendData.length > 0) {
+                fos.write(sendData);
+            }
+            fos.close();
+        } catch (Exception ignored) {}
+
         // Invoke event.
         SendPacketEvent event = new SendPacketEvent(this, packet);
         event.call();
