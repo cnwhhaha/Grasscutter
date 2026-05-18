@@ -184,7 +184,7 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
             sendTokenRspWithKeyExchange(session, keyId, clientRandKey);
         } else {
             // Simple response with dummy server_rand_key/sign
-            session.send(buildRawTokenRsp(session, keyId, null, null));
+            session.send(buildRawTokenRsp(session, keyId, null, null, null));
         }
     }
 
@@ -212,7 +212,8 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
             String serverRandKey = Utils.base64Encode(seedEncrypted);
             String sign = Utils.base64Encode(privateSignature.sign());
             Grasscutter.getLogger().info("[TokenReq] Key exchange OK, sending encrypted seed");
-            session.send(buildRawTokenRsp(session, keyId, serverRandKey, sign));
+            session.setUseSecretKey(true);
+            session.send(buildRawTokenRsp(session, keyId, serverRandKey, sign, seedBytes));
         } catch (Exception e) {
             // RSA failed → XOR fallback
             Grasscutter.getLogger().warn("[TokenReq] RSA key exchange failed ({}), using XOR fallback", e.getMessage());
@@ -221,10 +222,13 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
                 var seed = ByteHelper.longToBytes(encryptSeed);
                 Crypto.xor(clientBytes, seed);
                 String serverRandKey = Utils.base64Encode(clientBytes);
-                session.send(buildRawTokenRsp(session, keyId, serverRandKey, "bm90aGluZyBoZXJl"));
+                var seedBytes = ByteHelper.longToBytes(encryptSeed);
+                session.setUseSecretKey(true);
+                session.send(buildRawTokenRsp(session, keyId, serverRandKey, "bm90aGluZyBoZXJl", seedBytes));
             } catch (Exception ex) {
                 Grasscutter.getLogger().error("[TokenReq] XOR fallback also failed: {}", ex.getMessage());
-                session.send(buildRawTokenRsp(session, keyId, null, null));
+                session.setUseSecretKey(true);
+                session.send(buildRawTokenRsp(session, keyId, null, null, null));
             }
         }
     }
@@ -247,7 +251,7 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
      *   client_ip_str = 1871 (string)
      */
     private BasePacket buildRawTokenRsp(GameSession session, int keyId,
-                                         String serverRandKey, String sign) {
+                                         String serverRandKey, String sign, byte[] securitySeed) {
         var player = session.getPlayer();
         var token = session.getAccount().getToken();
         int uid = player.getUid();
@@ -269,8 +273,10 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
             writeStringField(bos, 6, String.valueOf(uid));
             // token = 15 (string)
             writeStringField(bos, 15, token != null ? token : "");
-            // security_cmd_buffer = 4 (bytes) — required by 4.8.0
-            writeBytesField(bos, 4, Crypto.ENCRYPT_SEED_BUFFER);
+            // security_cmd_buffer = 4 (bytes) — send actual XOR seed for 4.8.0 client
+            byte[] cmdBuf = (securitySeed != null && securitySeed.length > 0)
+                ? securitySeed : Crypto.ENCRYPT_SEED_BUFFER;
+            writeBytesField(bos, 4, cmdBuf);
             // platform_type = 13 (uint32)
             writeVarintField(bos, 13, 0, 3);
             // country_code = 1269 (string)
