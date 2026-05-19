@@ -11,13 +11,37 @@ import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.game.GameSession.SessionState;
 import emu.grasscutter.server.packet.send.PacketGetPlayerTokenRsp;
 import emu.grasscutter.utils.*;
-import emu.grasscutter.utils.helpers.ByteHelper;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.Signature;
 import java.util.*;
-import javax.crypto.Cipher;
 
+/**
+ * v2.0.10: Universal proto parser-based handler for Genshin 4.8.0 client.
+ *
+ * Strategy: The 4.8.0 client uses its own unique proto field numbers that don't
+ * match any single LunaGC version. For REQUESTS we use the general parser to
+ * extract fields from their known positions (verified by captured payloads).
+ * For RESPONSES we write critical fields at ALL known LunaGC positions
+ * (4.6.0 + 4.7.0 + 5.0.0) simultaneously — the client's proto parser will
+ * match whichever position its schema defines and ignore unknown positions.
+ *
+ * We do NOT attempt RSA key exchange. The server stays on DISPATCH_KEY
+ * encryption throughout. This avoids the complexity of reverse-engineering
+ * the exact server_rand_key/sign field positions.
+ *
+ * Known request fields (verified from capture):
+ *   field 1: varint=3       (platform_type or unknown)
+ *   field 4: varint=1       (unknown)
+ *   field 5: varint=1       (unknown)
+ *   field 9: string         (account_uid)     — matches LunaGC 4.6.0
+ *   field 10: string        (account_token)
+ *   field 13: varint=1      (unknown)
+ *   field 43: varint=5      (unknown)
+ *   field 450: string       (client_rand_key)
+ *   field 470: varint=1     (unknown)
+ *   field 1226: varint=2    (key_id)
+ *   field 1419: string      ("csc")
+ *   field 1465: varint=2    (unknown)
+ */
 @Opcodes(PacketOpcodes.GetPlayerTokenReq)
 public class HandlerGetPlayerTokenReq extends PacketHandler {
 
@@ -100,25 +124,38 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         // Parse all fields from the raw protobuf payload
         Map<Integer, Object> fields = parseProtoFields(payload);
 
-        // Extract account info: 4.8.0 client sends account_uid at field 9, token at field 10
+        // Extract account info — verified from 4.8.0 capture: field 9=account_uid, field 10=account_token
         String accountId = getFieldString(fields, 9);
         if (accountId.isEmpty()) {
-            accountId = getFieldString(fields, 3); // fallback: LunaGC 5.0.0 field
+            accountId = getFieldString(fields, 3); // LunaGC 5.0.0 fallback
         }
         String accountToken = getFieldString(fields, 10);
         if (accountToken.isEmpty()) {
-            accountToken = getFieldString(fields, 4); // fallback
+            accountToken = getFieldString(fields, 4); // LunaGC 5.0.0 fallback
         }
 
-        // Extract key exchange fields: 4.8.0 client sends key_id at 1226, client_rand_key at 450
-        int keyId = (int) getFieldVarint(fields, 1226, 0);
-        if (keyId == 0) keyId = (int) getFieldVarint(fields, 1485, 0); // LunaGC 5.0.0 fallback
-        String clientRandKey = getFieldString(fields, 450);
-        if (clientRandKey.isEmpty()) clientRandKey = getFieldString(fields, 94); // LunaGC fallback
-
         Grasscutter.getLogger().info(
-            "[TokenReq] accountId='{}' tokenLen={} keyId={} clientRandKeyLen={} payloadLen={}",
-            accountId, accountToken.length(), keyId, clientRandKey.length(), payload.length);
+            "[TokenReq] accountId='{}' tokenLen={} payloadLen={}",
+            accountId, accountToken.length(), payload.length);
+
+        // Log all fields for debugging
+        StringBuilder fieldLog = new StringBuilder("[TokenReq] Fields: ");
+        for (var entry : fields.entrySet()) {
+            Object v = entry.getValue();
+            String display;
+            if (v instanceof byte[]) {
+                byte[] b = (byte[]) v;
+                if (b.length <= 32) {
+                    display = "str'" + new String(b, StandardCharsets.UTF_8) + "'";
+                } else {
+                    display = "str(len=" + b.length + ",start=" + bytesToHex(b, 8) + ")";
+                }
+            } else {
+                display = "varint=" + v;
+            }
+            fieldLog.append(entry.getKey()).append("=").append(display).append(" ");
+        }
+        Grasscutter.getLogger().info(fieldLog.toString());
 
         if (accountId.isEmpty()) {
             Grasscutter.getLogger().error("[TokenReq] Could not extract account_uid from payload!");
@@ -178,130 +215,113 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         player.loadFromDatabase();
         session.setState(SessionState.WAITING_FOR_LOGIN);
 
-        // Send the token response
-        if (keyId > 0 && !clientRandKey.isEmpty()) {
-            // Key exchange requested by client
-            sendTokenRspWithKeyExchange(session, keyId, clientRandKey);
-        } else {
-            // Simple response with dummy server_rand_key/sign
-            session.send(buildRawTokenRsp(session, keyId, null, null, null));
-        }
+        // v2.0.10: NO key exchange. Stay on DISPATCH_KEY. Never call setUseSecretKey.
+        // Build a multi-position response covering all known LunaGC proto versions.
+        session.send(buildMultiPositionTokenRsp(session));
     }
 
     /**
-     * Perform key exchange (RSA decrypt → XOR → RSA encrypt → sign)
-     * with XOR fallback if RSA keys aren't available.
-     */
-    private void sendTokenRspWithKeyExchange(GameSession session, int keyId, String clientRandKeyB64) {
-        var encryptSeed = session.getEncryptSeed();
-        try {
-            // Try full RSA key exchange
-            var cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, Crypto.CUR_SIGNING_KEY);
-            var clientSeedEncrypted = Utils.base64Decode(clientRandKeyB64);
-            var clientSeed = ByteBuffer.wrap(cipher.doFinal(clientSeedEncrypted)).getLong();
-            var seedBytes = ByteBuffer.wrap(new byte[8]).putLong(encryptSeed ^ clientSeed).array();
-
-            cipher.init(Cipher.ENCRYPT_MODE, Crypto.EncryptionKeys.get(keyId));
-            var seedEncrypted = cipher.doFinal(seedBytes);
-
-            var privateSignature = Signature.getInstance("SHA256withRSA");
-            privateSignature.initSign(Crypto.CUR_SIGNING_KEY);
-            privateSignature.update(seedBytes);
-
-            String serverRandKey = Utils.base64Encode(seedEncrypted);
-            String sign = Utils.base64Encode(privateSignature.sign());
-            Grasscutter.getLogger().info("[TokenReq] Key exchange OK, sending encrypted seed");
-            session.setUseSecretKey(true);
-            session.send(buildRawTokenRsp(session, keyId, serverRandKey, sign, seedBytes));
-        } catch (Exception e) {
-            // RSA failed → XOR fallback
-            Grasscutter.getLogger().warn("[TokenReq] RSA key exchange failed ({}), using XOR fallback", e.getMessage());
-            try {
-                var clientBytes = Utils.base64Decode(clientRandKeyB64);
-                var seed = ByteHelper.longToBytes(encryptSeed);
-                Crypto.xor(clientBytes, seed);
-                String serverRandKey = Utils.base64Encode(clientBytes);
-                var seedBytes = ByteHelper.longToBytes(encryptSeed);
-                session.setUseSecretKey(true);
-                session.send(buildRawTokenRsp(session, keyId, serverRandKey, "bm90aGluZyBoZXJl", seedBytes));
-            } catch (Exception ex) {
-                Grasscutter.getLogger().error("[TokenReq] XOR fallback also failed: {}", ex.getMessage());
-                session.setUseSecretKey(true);
-                session.send(buildRawTokenRsp(session, keyId, null, null, null));
-            }
-        }
-    }
-
-    /**
-     * Build a raw protobuf-encoded GetPlayerTokenRsp using LunaGC 5.0.0 field numbers
-     * (compatible with Genshin 4.8.0 client).
+     * Build GetPlayerTokenRsp writing critical fields at ALL known LunaGC positions
+     * (4.6.0, 4.7.0, 5.0.0). The 4.8.0 client will match the position(s) its proto
+     * defines and safely ignore the rest.
      *
-     * Field mapping (LunaGC 5.0.0 GetPlayerTokenRsp proto):
-     *   uid = 8 (uint32)
-     *   token = 15 (string)
-     *   account_uid = 6 (string)
-     *   security_cmd_buffer = 4 (bytes)
-     *   platform_type = 13 (uint32)
-     *   country_code = 1269 (string)
-     *   key_id = 398 (uint32)
-     *   server_rand_key = 68 (string)
-     *   sign = 1885 (string)
-     *   client_version_random_key = 496 (string)
-     *   client_ip_str = 1871 (string)
+     * Key fields and their positions across versions:
+     *
+     *   uid (uint32):         v4.6=13,  v4.7=4,   v5.0=8
+     *   token (string):        v4.6=14,  v4.7=2,   v5.0=15
+     *   account_uid (string):  v4.6=3,   v4.7=9,   v5.0=6
+     *   platform_type (uint32): v4.6=15, v4.7=14,  v5.0=13
+     *   country_code (string):  v4.6=1096, v4.7=254, v5.0=1269
+     *   key_id (uint32):       v4.6=1411, v4.7=720,  v5.0=398
+     *   client_ip_str (string): v4.6=703,  —,       v5.0=1871
+     *   client_version_random_key (string): v4.6=207, —, v5.0=496
+     *   security_cmd_buffer (bytes): —,     v4.7=3,  v5.0=4
+     *   server_rand_key (string): v4.6=1118, v4.7=910, v5.0=68
+     *   sign (string):         v4.6=477,  v4.7=414, v5.0=1885
      */
-    private BasePacket buildRawTokenRsp(GameSession session, int keyId,
-                                         String serverRandKey, String sign, byte[] securitySeed) {
+    private BasePacket buildMultiPositionTokenRsp(GameSession session) {
         var player = session.getPlayer();
-        var token = session.getAccount().getToken();
+        var account = session.getAccount();
+        var token = account.getToken();
         int uid = player.getUid();
+        String accountId = account.getId();  // e.g. "10001"
 
-        // Use dummy server_rand_key/sign if not provided (from LunaGC codebase)
-        if (serverRandKey == null || serverRandKey.isEmpty()) {
-            serverRandKey = "CfO2d7eEYha5bJRXdCfoiemPNAtXDpyNTQ3ObeTt5a7SSHz6GAEO1WPiTQ7fR6OG8LqhVN3ZTxH9Bnkc09BnCxud+kn0+PiGv1PTOuWK0LkQQ1xmg89zA9IHS+OJd1yKT2BBmJf4sN61gi+WtT7aFwRlzku3kGCk6p2wiPo2enE7UwCFi/GiD4vq/m3hNZiKBjitAvheaqbSLjMpBax+c8HXoY5G09ap1PjEnUQPIK0xZRRQKpnrWcCyP4j8N3WwYYQGDW+OYOJjBvJdv+D6XSdEi+4IsZASYVpu9V8UZ570Cakbc+IjUm0UZJXghcR7izIjKtoNHf2Fmc26DEp1Jw==";
-        }
-        if (sign == null || sign.isEmpty()) {
-            sign = "mMx/Klovbzq1QxQvVgm30nYhj0jDOykyo9aparyWRNz3ACxV/2gIdLpyM/SMerWMTcx26NapQ9HsKK7BRK7Yx+nMR0O83BkBlxfl+NEarYr6kj9lBKAxZYXTXFRYA4sRynvwa/MOPmGwYMNl6aVvMohhvrsTopsRvIuGFtnCVL2wBfbxcNnbVfP5k+DxPuQnxa/vi+ju8TogW2R+r0p9zQ5NJe1oaYe4xYbyhefFVv11FA/JQHwMHLEyrEdPqTzdN75CUmE09yLuAoeJzoJ1vwwjwfcH9dMDPxsewNJBGiylVHYf56kF4HypNkYNjtxbghgLBaHg0ZoeYHTOJ7YUTQ==";
-        }
+        // Dummy server_rand_key/sign from original LunaGC codebase
+        String dummyRandKey = "CfO2d7eEYha5bJRXdCfoiemPNAtXDpyNTQ3ObeTt5a7SSHz6GAEO1WPiTQ7fR6OG8LqhVN3ZTxH9Bnkc09BnCxud+kn0+PiGv1PTOuWK0LkQQ1xmg89zA9IHS+OJd1yKT2BBmJf4sN61gi+WtT7aFwRlzku3kGCk6p2wiPo2enE7UwCFi/GiD4vq/m3hNZiKBjitAvheaqbSLjMpBax+c8HXoY5G09ap1PjEnUQPIK0xZRRQKpnrWcCyP4j8N3WwYYQGDW+OYOJjBvJdv+D6XSdEi+4IsZASYVpu9V8UZ570Cakbc+IjUm0UZJXghcR7izIjKtoNHf2Fmc26DEp1Jw==";
+        String dummySign = "mMx/Klovbzq1QxQvVgm30nYhj0jDOykyo9aparyWRNz3ACxV/2gIdLpyM/SMerWMTcx26NapQ9HsKK7BRK7Yx+nMR0O83BkBlxfl+NEarYr6kj9lBKAxZYXTXFRYA4sRynvwa/MOPmGwYMNl6aVvMohhvrsTopsRvIuGFtnCVL2wBfbxcNnbVfP5k+DxPuQnxa/vi+ju8TogW2R+r0p9zQ5NJe1oaYe4xYbyhefFVv11FA/JQHwMHLEyrEdPqTzdN75CUmE09yLuAoeJzoJ1vwwjwfcH9dMDPxsewNJBGiylVHYf56kF4HypNkYNjtxbghgLBaHg0ZoeYHTOJ7YUTQ==";
 
         try {
             java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
 
-            // uid = 8 (uint32)
-            writeVarintField(bos, 8, 0, uid);
-            // account_uid = 6 (string)
-            writeStringField(bos, 6, String.valueOf(uid));
-            // token = 15 (string)
-            writeStringField(bos, 15, token != null ? token : "");
-            // security_cmd_buffer = 4 (bytes) — send actual XOR seed for 4.8.0 client
-            byte[] cmdBuf = (securitySeed != null && securitySeed.length > 0)
-                ? securitySeed : Crypto.ENCRYPT_SEED_BUFFER;
-            writeBytesField(bos, 4, cmdBuf);
-            // platform_type = 13 (uint32)
-            writeVarintField(bos, 13, 0, 3);
-            // country_code = 1269 (string)
-            writeStringField(bos, 1269, "US");
-            // key_id = 398 (uint32)
-            writeVarintField(bos, 398, 0, keyId);
-            // server_rand_key = 68 (string)
-            writeStringField(bos, 68, serverRandKey);
-            // sign = 1885 (string)
-            writeStringField(bos, 1885, sign);
-            // client_version_random_key = 496 (string)
-            writeStringField(bos, 496, "c25-314dd05b0b5f");
-            // client_ip_str = 1871 (string)
-            writeStringField(bos, 1871, session.getAddress().getAddress().getHostAddress());
+            // === uid (uint32) — all known positions ===
+            writeVarintField(bos, 13, 0, uid);  // LunaGC 4.6.0
+            writeVarintField(bos, 4, 0, uid);   // LunaGC 4.7.0
+            writeVarintField(bos, 8, 0, uid);   // LunaGC 5.0.0
+
+            // === token (string) — all known positions ===
+            if (token != null && !token.isEmpty()) {
+                writeStringField(bos, 14, token);  // LunaGC 4.6.0
+                writeStringField(bos, 2, token);   // LunaGC 4.7.0
+                writeStringField(bos, 15, token);  // LunaGC 5.0.0
+            }
+
+            // === account_uid (string) — all known positions ===
+            if (accountId != null && !accountId.isEmpty()) {
+                writeStringField(bos, 3, accountId);   // LunaGC 4.6.0
+                writeStringField(bos, 9, accountId);   // LunaGC 4.7.0
+                writeStringField(bos, 6, accountId);   // LunaGC 5.0.0
+            }
+
+            // === platform_type (uint32) — all known positions ===
+            writeVarintField(bos, 15, 0, 3);  // LunaGC 4.6.0
+            writeVarintField(bos, 14, 0, 3);  // LunaGC 4.7.0
+            writeVarintField(bos, 13, 0, 3);  // LunaGC 5.0.0
+
+            // === country_code (string) — all known positions ===
+            writeStringField(bos, 1096, "US");  // LunaGC 4.6.0
+            writeStringField(bos, 254, "US");    // LunaGC 4.7.0
+            writeStringField(bos, 1269, "US");   // LunaGC 5.0.0
+
+            // === key_id (uint32) — all known positions ===
+            writeVarintField(bos, 1411, 0, 0);  // LunaGC 4.6.0 (key_id=0 → no key exchange)
+            writeVarintField(bos, 720, 0, 0);   // LunaGC 4.7.0
+            writeVarintField(bos, 398, 0, 0);   // LunaGC 5.0.0
+
+            // === client_ip_str (string) ===
+            String ipStr = session.getAddress().getAddress().getHostAddress();
+            writeStringField(bos, 703, ipStr);   // LunaGC 4.6.0
+            writeStringField(bos, 1871, ipStr);  // LunaGC 5.0.0
+
+            // === client_version_random_key (string) ===
+            String versionKey = "c25-314dd05b0b5f";
+            writeStringField(bos, 207, versionKey);  // LunaGC 4.6.0
+            writeStringField(bos, 496, versionKey);  // LunaGC 5.0.0
+
+            // === security_cmd_buffer (bytes) ===
+            // Write the actual encrypt seed buffer so client can derive correct keys
+            writeBytesField(bos, 3, Crypto.ENCRYPT_SEED_BUFFER);  // LunaGC 4.7.0 position
+            writeBytesField(bos, 4, Crypto.ENCRYPT_SEED_BUFFER);  // LunaGC 5.0.0 position
+
+            // === server_rand_key (string) — dummy ===
+            writeStringField(bos, 1118, dummyRandKey);  // LunaGC 4.6.0
+            writeStringField(bos, 910, dummyRandKey);   // LunaGC 4.7.0
+            writeStringField(bos, 68, dummyRandKey);    // LunaGC 5.0.0
+
+            // === sign (string) — dummy ===
+            writeStringField(bos, 477, dummySign);   // LunaGC 4.6.0
+            writeStringField(bos, 414, dummySign);   // LunaGC 4.7.0
+            writeStringField(bos, 1885, dummySign);  // LunaGC 5.0.0
 
             byte[] data = bos.toByteArray();
-            Grasscutter.getLogger().info("[TokenReq] Raw rsp size={} uid={} keyId={} firstBytes={}",
-                data.length, uid, keyId, bytesToHex(data, Math.min(data.length, 40)));
+            Grasscutter.getLogger().info("[TokenReq] Multi rsp size={} uid={} accountId={}",
+                data.length, uid, accountId);
 
             BasePacket pkt = new BasePacket(PacketOpcodes.GetPlayerTokenRsp, true);
             pkt.setUseDispatchKey(true);
             pkt.setData(data);
             return pkt;
         } catch (Exception e) {
-            Grasscutter.getLogger().error("[TokenReq] Failed to build raw rsp: {}", e.getMessage(), e);
+            Grasscutter.getLogger().error("[TokenReq] Failed to build multi rsp: {}", e.getMessage(), e);
             return null;
         }
     }
