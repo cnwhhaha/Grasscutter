@@ -58,7 +58,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 group = 'io.grasscutter'
-version = '2.0.10'
+version = '2.0.12'
 
 java {
     withJavadocJar()
