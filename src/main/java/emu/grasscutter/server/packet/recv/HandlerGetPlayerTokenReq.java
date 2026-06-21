@@ -22,8 +22,25 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
     public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
         var req = GetPlayerTokenReq.parseFrom(payload);
 
-        var accountId = req.getAccountUid();
-        var account = DispatchUtils.authenticate(accountId, req.getAccountToken());
+        var accountUid = req.getAccountUid().toStringUtf8();
+        if (accountUid.isBlank()) {
+            accountUid = req.getAccountUid().toString().replace("\"", "");
+        }
+        var accountToken = req.getAccountToken();
+
+        Grasscutter.getLogger()
+                .info(
+                        "GetPlayerTokenReq accountUid={} accountType={} platformType={} channelId={} isGuest={} tokenLen={} unk10Len={}",
+                        accountUid,
+                        req.getAccountType(),
+                        req.getPlatformType(),
+                        req.getChannelId(),
+                        req.getIsGuest(),
+                        accountToken.length(),
+                        req.getUnk10().size());
+
+        var accountId = accountUid;
+        var account = DispatchUtils.authenticate(accountId, accountToken);
 
         if (account == null && !DebugConstants.ACCEPT_CLIENT_TOKEN) {
             session.close();
@@ -84,5 +101,14 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         session.setState(SessionState.WAITING_FOR_LOGIN);
         session.send(new PacketGetPlayerTokenRsp(session, req));
         session.setUseSecretKey(true);
+
+        Grasscutter.getLogger()
+                .info(
+                        "GetPlayerTokenRsp sent uid={} seed={} platformType={} channelId={} state={}",
+                        session.getPlayer().getUid(),
+                        session.getEncryptSeed(),
+                        req.getPlatformType(),
+                        req.getChannelId(),
+                        session.getState());
     }
 }

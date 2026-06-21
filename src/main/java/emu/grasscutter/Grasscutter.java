@@ -106,7 +106,14 @@ public final class Grasscutter {
         // Initialize server.
         logger.info(translate("messages.status.starting"));
         logger.info(translate("messages.status.game_version", GameConstants.VERSION));
-        logger.info(translate("messages.status.version", "2.0.3", "KeiLuna"));
+        var displayVersion = BuildConfig.VERSION;
+        var displayVersionParts = BuildConfig.VERSION.split("-", 2);
+        if (displayVersionParts.length == 2) {
+            displayVersion = displayVersionParts[0];
+            logger.info(translate("messages.status.version", displayVersion, displayVersionParts[1]));
+        } else {
+            logger.info(translate("messages.status.version", displayVersion, "cnwhaha"));
+        }
 
         // Initialize database.
         DatabaseManager.initialize();

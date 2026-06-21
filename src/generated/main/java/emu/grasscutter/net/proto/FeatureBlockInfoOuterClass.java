@@ -19,22 +19,18 @@ public final class FeatureBlockInfoOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint32 feature_type = 1;</code>
+     * <code>uint32 featureType = 1;</code>
      * @return The featureType.
      */
     int getFeatureType();
 
     /**
-     * <code>uint32 end_time = 2;</code>
+     * <code>uint32 endTime = 2;</code>
      * @return The endTime.
      */
     int getEndTime();
   }
   /**
-   * <pre>
-   * Obf: NGEGAFNJIFO
-   * </pre>
-   *
    * Protobuf type {@code FeatureBlockInfo}
    */
   public static final class FeatureBlockInfo extends
@@ -121,10 +117,10 @@ public final class FeatureBlockInfoOuterClass {
               emu.grasscutter.net.proto.FeatureBlockInfoOuterClass.FeatureBlockInfo.class, emu.grasscutter.net.proto.FeatureBlockInfoOuterClass.FeatureBlockInfo.Builder.class);
     }
 
-    public static final int FEATURE_TYPE_FIELD_NUMBER = 1;
+    public static final int FEATURETYPE_FIELD_NUMBER = 1;
     private int featureType_;
     /**
-     * <code>uint32 feature_type = 1;</code>
+     * <code>uint32 featureType = 1;</code>
      * @return The featureType.
      */
     @java.lang.Override
@@ -132,10 +128,10 @@ public final class FeatureBlockInfoOuterClass {
       return featureType_;
     }
 
-    public static final int END_TIME_FIELD_NUMBER = 2;
+    public static final int ENDTIME_FIELD_NUMBER = 2;
     private int endTime_;
     /**
-     * <code>uint32 end_time = 2;</code>
+     * <code>uint32 endTime = 2;</code>
      * @return The endTime.
      */
     @java.lang.Override
@@ -210,9 +206,9 @@ public final class FeatureBlockInfoOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + FEATURE_TYPE_FIELD_NUMBER;
+      hash = (37 * hash) + FEATURETYPE_FIELD_NUMBER;
       hash = (53 * hash) + getFeatureType();
-      hash = (37 * hash) + END_TIME_FIELD_NUMBER;
+      hash = (37 * hash) + ENDTIME_FIELD_NUMBER;
       hash = (53 * hash) + getEndTime();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -310,10 +306,6 @@ public final class FeatureBlockInfoOuterClass {
       return builder;
     }
     /**
-     * <pre>
-     * Obf: NGEGAFNJIFO
-     * </pre>
-     *
      * Protobuf type {@code FeatureBlockInfo}
      */
     public static final class Builder extends
@@ -468,7 +460,7 @@ public final class FeatureBlockInfoOuterClass {
 
       private int featureType_ ;
       /**
-       * <code>uint32 feature_type = 1;</code>
+       * <code>uint32 featureType = 1;</code>
        * @return The featureType.
        */
       @java.lang.Override
@@ -476,7 +468,7 @@ public final class FeatureBlockInfoOuterClass {
         return featureType_;
       }
       /**
-       * <code>uint32 feature_type = 1;</code>
+       * <code>uint32 featureType = 1;</code>
        * @param value The featureType to set.
        * @return This builder for chaining.
        */
@@ -487,7 +479,7 @@ public final class FeatureBlockInfoOuterClass {
         return this;
       }
       /**
-       * <code>uint32 feature_type = 1;</code>
+       * <code>uint32 featureType = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearFeatureType() {
@@ -499,7 +491,7 @@ public final class FeatureBlockInfoOuterClass {
 
       private int endTime_ ;
       /**
-       * <code>uint32 end_time = 2;</code>
+       * <code>uint32 endTime = 2;</code>
        * @return The endTime.
        */
       @java.lang.Override
@@ -507,7 +499,7 @@ public final class FeatureBlockInfoOuterClass {
         return endTime_;
       }
       /**
-       * <code>uint32 end_time = 2;</code>
+       * <code>uint32 endTime = 2;</code>
        * @param value The endTime to set.
        * @return This builder for chaining.
        */
@@ -518,7 +510,7 @@ public final class FeatureBlockInfoOuterClass {
         return this;
       }
       /**
-       * <code>uint32 end_time = 2;</code>
+       * <code>uint32 endTime = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearEndTime() {
@@ -594,10 +586,9 @@ public final class FeatureBlockInfoOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\026FeatureBlockInfo.proto\":\n\020FeatureBlock" +
-      "Info\022\024\n\014feature_type\030\001 \001(\r\022\020\n\010end_time\030\002" +
-      " \001(\rB\033\n\031emu.grasscutter.net.protob\006proto" +
-      "3"
+      "\n\026FeatureBlockInfo.proto\"8\n\020FeatureBlock" +
+      "Info\022\023\n\013featureType\030\001 \001(\r\022\017\n\007endTime\030\002 \001" +
+      "(\rB\033\n\031emu.grasscutter.net.protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

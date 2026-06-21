@@ -8,6 +8,16 @@ import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.utils.Crypto;
 
 public class PacketGetPlayerTokenRsp extends BasePacket {
+    private static final String DEFAULT_COUNTRY_CODE = "US";
+    private static final String DEFAULT_CPS = "mihoyo";
+
+    private static long resolvePlatformType(GetPlayerTokenReq req) {
+        return req.getPlatformType() > 0 ? req.getPlatformType() : 3;
+    }
+
+    private static int resolveChannelId(GetPlayerTokenReq req) {
+        return req.getChannelId() > 0 ? req.getChannelId() : 1;
+    }
 
     public PacketGetPlayerTokenRsp(GameSession session, GetPlayerTokenReq req) {
         super(PacketOpcodes.GetPlayerTokenRsp, true);
@@ -20,12 +30,13 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
                         .setAccountToken(session.getAccount().getToken())
                         .setAccountType((int) req.getAccountType())
                         .setIsProficientPlayer(session.getPlayer().getAvatars().getAvatarCount() > 0)
+                        .setGmUid(0)
                         .setSecretKey(session.getEncryptSeed())
                         .setSecretKeyBuffer(ByteString.copyFrom(Crypto.ENCRYPT_SEED_BUFFER))
-                        .setPlatformType(req.getPlatformType() > 0 ? req.getPlatformType() : 3)
-                        .setChannelId((int) req.getSchannelId())
-                        .setCountryCode("US")
-                        .setUnk1("csc")
+                        .setPlatformType(resolvePlatformType(req))
+                        .setChannelId(resolveChannelId(req))
+                        .setCountryCode(DEFAULT_COUNTRY_CODE)
+                        .setUnk1(DEFAULT_CPS)
                         .setUnk3(1)
                         .setClientIp(session.getAddress().getAddress().getHostAddress())
                         .build();
@@ -41,7 +52,9 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         GetPlayerTokenRsp p =
                 GetPlayerTokenRsp.newBuilder()
                         .setPlayerUid(session.getPlayer().getUid())
-                        .setCountryCode("US")
+                        .setCountryCode(DEFAULT_COUNTRY_CODE)
+                        .setUnk1(DEFAULT_CPS)
+                        .setUnk3(1)
                         .setClientIp(session.getAddress().getAddress().getHostAddress())
                         .build();
 

@@ -2,6 +2,7 @@ package emu.grasscutter.server.packet.recv;
 
 import static emu.grasscutter.config.Configuration.GAME_OPTIONS;
 
+import emu.grasscutter.Grasscutter;
 import emu.grasscutter.data.GameData;
 import emu.grasscutter.game.avatar.Avatar;
 import emu.grasscutter.game.player.Player;
@@ -23,6 +24,21 @@ public class HandlerPlayerLoginReq extends PacketHandler {
 
         // Parse request
         PlayerLoginReq req = PlayerLoginReq.parseFrom(payload);
+
+        Grasscutter.getLogger()
+                .info(
+                        "PlayerLoginReq tokenMatch={} loginRand={} expectedSeed={} targetUid={} accountType={} platformType={} channelId={} countryCode={} checksumClientVersion={} extraBinDataLen={} securityCmdReplyLen={}",
+                        req.getToken().equals(session.getAccount().getToken()),
+                        req.getLoginRand(),
+                        session.getEncryptSeed(),
+                        req.getTargetUid(),
+                        req.getAccountType(),
+                        req.getPlatformType(),
+                        req.getChannelId(),
+                        req.getCountryCode(),
+                        req.getChecksumClientVersion(),
+                        req.getExtraBinData().size(),
+                        req.getSecurityCmdReply().size());
 
         // Authenticate session
         if (!req.getToken().equals(session.getAccount().getToken())) {
@@ -68,5 +84,12 @@ public class HandlerPlayerLoginReq extends PacketHandler {
 
         // Final packet to tell client logging in is done
         session.send(new PacketPlayerLoginRsp(session));
+
+        Grasscutter.getLogger()
+                .info(
+                        "PlayerLoginRsp sent uid={} loginRand={} stateBeforeActive={}",
+                        session.getPlayer().getUid(),
+                        session.getEncryptSeed(),
+                        session.getState());
     }
 }

@@ -15,6 +15,8 @@ import emu.grasscutter.utils.Crypto;
 import java.util.Objects;
 
 public class PacketPlayerLoginRsp extends BasePacket {
+    private static final String DEFAULT_GAME_BIZ = "hk4e_global";
+    private static final String DEFAULT_COUNTRY_CODE = "US";
 
     private static QueryCurrRegionHttpRspOuterClass.QueryCurrRegionHttpRsp regionCache;
 
@@ -57,7 +59,7 @@ public class PacketPlayerLoginRsp extends BasePacket {
                         .setLoginRand(session.getEncryptSeed())
                         // .setIsUseAbilityHash(true) // true
                         // .setAbilityHashCode(1844674) // 1844674
-                        .setGameBiz("hk4e_global")
+                        .setGameBiz(DEFAULT_GAME_BIZ)
                         // .setClientDataVersion(info.getClientDataVersion())
                         // .setClientSilenceDataVersion(info.getClientSilenceDataVersion())
                         // .setClientMd5(info.getClientDataMd5())
@@ -67,8 +69,8 @@ public class PacketPlayerLoginRsp extends BasePacket {
                         // .setClientSilenceVersionSuffix(info.getClientSilenceVersionSuffix())
                         // .setIsScOpen(false)
                         // .setScInfo(ByteString.copyFrom(new byte[] {}))
-                        // .setRegisterCps("mihoyo")
-                        .setCountryCode("US")
+                        .setRegisterCps("mihoyo")
+                        .setCountryCode(DEFAULT_COUNTRY_CODE)
                         .build();
 
         this.setData(p.toByteArray());

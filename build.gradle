@@ -58,7 +58,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 group = 'io.grasscutter'
-version = '2.0.12'
+version = '2.1.0-cnwhaha'
 
 java {
     withJavadocJar()
@@ -160,7 +160,7 @@ jar {
 
     archiveBaseName = 'grasscutter'
     if (project.hasProperty('jarFilename')) {
-        archiveFileName = "${jarFilename}.${archiveExtension}"
+        archiveFileName = "${jarFilename}.jar"
     }
 
     from {
