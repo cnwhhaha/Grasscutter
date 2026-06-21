@@ -21,7 +21,7 @@ public class PacketPlayerLoginRsp extends BasePacket {
     public PacketPlayerLoginRsp(GameSession session) {
         super(PacketOpcodes.PlayerLoginRsp, 1);
 
-        this.setUseDispatchKey(true);
+        this.setUseDispatchKey(false);
 
         RegionInfo info;
 
@@ -52,6 +52,9 @@ public class PacketPlayerLoginRsp extends BasePacket {
 
         PlayerLoginRsp p =
                 PlayerLoginRsp.newBuilder()
+                        .setRetcode(0)
+                        .setTargetUid(session.getPlayer().getUid())
+                        .setLoginRand(session.getEncryptSeed())
                         // .setIsUseAbilityHash(true) // true
                         // .setAbilityHashCode(1844674) // 1844674
                         .setGameBiz("hk4e_global")
