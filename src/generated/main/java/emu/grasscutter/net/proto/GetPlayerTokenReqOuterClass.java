@@ -67,22 +67,22 @@ public final class GetPlayerTokenReqOuterClass {
     boolean getUnk8();
 
     /**
-     * <code>string accountToken = 9;</code>
-     * @return The accountToken.
+     * <code>string field9Uid = 9;</code>
+     * @return The field9Uid.
      */
-    java.lang.String getAccountToken();
+    java.lang.String getField9Uid();
     /**
-     * <code>string accountToken = 9;</code>
-     * @return The bytes for accountToken.
+     * <code>string field9Uid = 9;</code>
+     * @return The bytes for field9Uid.
      */
     com.google.protobuf.ByteString
-        getAccountTokenBytes();
+        getField9UidBytes();
 
     /**
-     * <code>bytes unk10 = 10;</code>
-     * @return The unk10.
+     * <code>bytes field10Material = 10;</code>
+     * @return The field10Material.
      */
-    com.google.protobuf.ByteString getUnk10();
+    com.google.protobuf.ByteString getField10Material();
 
     /**
      * <code>uint32 unk11 = 11;</code>
@@ -128,8 +128,8 @@ public final class GetPlayerTokenReqOuterClass {
     }
     private GetPlayerTokenReq() {
       accountUid_ = com.google.protobuf.ByteString.EMPTY;
-      accountToken_ = "";
-      unk10_ = com.google.protobuf.ByteString.EMPTY;
+      field9Uid_ = "";
+      field10Material_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -205,12 +205,12 @@ public final class GetPlayerTokenReqOuterClass {
             case 74: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              accountToken_ = s;
+              field9Uid_ = s;
               break;
             }
             case 82: {
 
-              unk10_ = input.readBytes();
+              field10Material_ = input.readBytes();
               break;
             }
             case 88: {
@@ -358,53 +358,53 @@ public final class GetPlayerTokenReqOuterClass {
       return unk8_;
     }
 
-    public static final int ACCOUNTTOKEN_FIELD_NUMBER = 9;
-    private volatile java.lang.Object accountToken_;
+    public static final int FIELD9UID_FIELD_NUMBER = 9;
+    private volatile java.lang.Object field9Uid_;
     /**
-     * <code>string accountToken = 9;</code>
-     * @return The accountToken.
+     * <code>string field9Uid = 9;</code>
+     * @return The field9Uid.
      */
     @java.lang.Override
-    public java.lang.String getAccountToken() {
-      java.lang.Object ref = accountToken_;
+    public java.lang.String getField9Uid() {
+      java.lang.Object ref = field9Uid_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        accountToken_ = s;
+        field9Uid_ = s;
         return s;
       }
     }
     /**
-     * <code>string accountToken = 9;</code>
-     * @return The bytes for accountToken.
+     * <code>string field9Uid = 9;</code>
+     * @return The bytes for field9Uid.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getAccountTokenBytes() {
-      java.lang.Object ref = accountToken_;
+        getField9UidBytes() {
+      java.lang.Object ref = field9Uid_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        accountToken_ = b;
+        field9Uid_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int UNK10_FIELD_NUMBER = 10;
-    private com.google.protobuf.ByteString unk10_;
+    public static final int FIELD10MATERIAL_FIELD_NUMBER = 10;
+    private com.google.protobuf.ByteString field10Material_;
     /**
-     * <code>bytes unk10 = 10;</code>
-     * @return The unk10.
+     * <code>bytes field10Material = 10;</code>
+     * @return The field10Material.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getUnk10() {
-      return unk10_;
+    public com.google.protobuf.ByteString getField10Material() {
+      return field10Material_;
     }
 
     public static final int UNK11_FIELD_NUMBER = 11;
@@ -500,11 +500,11 @@ public final class GetPlayerTokenReqOuterClass {
       if (unk8_ != false) {
         output.writeBool(8, unk8_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountToken_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, accountToken_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(field9Uid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, field9Uid_);
       }
-      if (!unk10_.isEmpty()) {
-        output.writeBytes(10, unk10_);
+      if (!field10Material_.isEmpty()) {
+        output.writeBytes(10, field10Material_);
       }
       if (unk11_ != 0) {
         output.writeUInt32(11, unk11_);
@@ -562,12 +562,12 @@ public final class GetPlayerTokenReqOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, unk8_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountToken_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, accountToken_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(field9Uid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, field9Uid_);
       }
-      if (!unk10_.isEmpty()) {
+      if (!field10Material_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(10, unk10_);
+          .computeBytesSize(10, field10Material_);
       }
       if (unk11_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -620,10 +620,10 @@ public final class GetPlayerTokenReqOuterClass {
           != other.getUnk7()) return false;
       if (getUnk8()
           != other.getUnk8()) return false;
-      if (!getAccountToken()
-          .equals(other.getAccountToken())) return false;
-      if (!getUnk10()
-          .equals(other.getUnk10())) return false;
+      if (!getField9Uid()
+          .equals(other.getField9Uid())) return false;
+      if (!getField10Material()
+          .equals(other.getField10Material())) return false;
       if (getUnk11()
           != other.getUnk11()) return false;
       if (getUnk12()
@@ -665,10 +665,10 @@ public final class GetPlayerTokenReqOuterClass {
       hash = (37 * hash) + UNK8_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getUnk8());
-      hash = (37 * hash) + ACCOUNTTOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getAccountToken().hashCode();
-      hash = (37 * hash) + UNK10_FIELD_NUMBER;
-      hash = (53 * hash) + getUnk10().hashCode();
+      hash = (37 * hash) + FIELD9UID_FIELD_NUMBER;
+      hash = (53 * hash) + getField9Uid().hashCode();
+      hash = (37 * hash) + FIELD10MATERIAL_FIELD_NUMBER;
+      hash = (53 * hash) + getField10Material().hashCode();
       hash = (37 * hash) + UNK11_FIELD_NUMBER;
       hash = (53 * hash) + getUnk11();
       hash = (37 * hash) + UNK12_FIELD_NUMBER;
@@ -829,9 +829,9 @@ public final class GetPlayerTokenReqOuterClass {
 
         unk8_ = false;
 
-        accountToken_ = "";
+        field9Uid_ = "";
 
-        unk10_ = com.google.protobuf.ByteString.EMPTY;
+        field10Material_ = com.google.protobuf.ByteString.EMPTY;
 
         unk11_ = 0;
 
@@ -877,8 +877,8 @@ public final class GetPlayerTokenReqOuterClass {
         result.unk6_ = unk6_;
         result.unk7_ = unk7_;
         result.unk8_ = unk8_;
-        result.accountToken_ = accountToken_;
-        result.unk10_ = unk10_;
+        result.field9Uid_ = field9Uid_;
+        result.field10Material_ = field10Material_;
         result.unk11_ = unk11_;
         result.unk12_ = unk12_;
         result.platformType_ = platformType_;
@@ -956,12 +956,12 @@ public final class GetPlayerTokenReqOuterClass {
         if (other.getUnk8() != false) {
           setUnk8(other.getUnk8());
         }
-        if (!other.getAccountToken().isEmpty()) {
-          accountToken_ = other.accountToken_;
+        if (!other.getField9Uid().isEmpty()) {
+          field9Uid_ = other.field9Uid_;
           onChanged();
         }
-        if (other.getUnk10() != com.google.protobuf.ByteString.EMPTY) {
-          setUnk10(other.getUnk10());
+        if (other.getField10Material() != com.google.protobuf.ByteString.EMPTY) {
+          setField10Material(other.getField10Material());
         }
         if (other.getUnk11() != 0) {
           setUnk11(other.getUnk11());
@@ -1258,112 +1258,112 @@ public final class GetPlayerTokenReqOuterClass {
         return this;
       }
 
-      private java.lang.Object accountToken_ = "";
+      private java.lang.Object field9Uid_ = "";
       /**
-       * <code>string accountToken = 9;</code>
-       * @return The accountToken.
+       * <code>string field9Uid = 9;</code>
+       * @return The field9Uid.
        */
-      public java.lang.String getAccountToken() {
-        java.lang.Object ref = accountToken_;
+      public java.lang.String getField9Uid() {
+        java.lang.Object ref = field9Uid_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          accountToken_ = s;
+          field9Uid_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string accountToken = 9;</code>
-       * @return The bytes for accountToken.
+       * <code>string field9Uid = 9;</code>
+       * @return The bytes for field9Uid.
        */
       public com.google.protobuf.ByteString
-          getAccountTokenBytes() {
-        java.lang.Object ref = accountToken_;
+          getField9UidBytes() {
+        java.lang.Object ref = field9Uid_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          accountToken_ = b;
+          field9Uid_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string accountToken = 9;</code>
-       * @param value The accountToken to set.
+       * <code>string field9Uid = 9;</code>
+       * @param value The field9Uid to set.
        * @return This builder for chaining.
        */
-      public Builder setAccountToken(
+      public Builder setField9Uid(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        accountToken_ = value;
+        field9Uid_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string accountToken = 9;</code>
+       * <code>string field9Uid = 9;</code>
        * @return This builder for chaining.
        */
-      public Builder clearAccountToken() {
+      public Builder clearField9Uid() {
         
-        accountToken_ = getDefaultInstance().getAccountToken();
+        field9Uid_ = getDefaultInstance().getField9Uid();
         onChanged();
         return this;
       }
       /**
-       * <code>string accountToken = 9;</code>
-       * @param value The bytes for accountToken to set.
+       * <code>string field9Uid = 9;</code>
+       * @param value The bytes for field9Uid to set.
        * @return This builder for chaining.
        */
-      public Builder setAccountTokenBytes(
+      public Builder setField9UidBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        accountToken_ = value;
+        field9Uid_ = value;
         onChanged();
         return this;
       }
 
-      private com.google.protobuf.ByteString unk10_ = com.google.protobuf.ByteString.EMPTY;
+      private com.google.protobuf.ByteString field10Material_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>bytes unk10 = 10;</code>
-       * @return The unk10.
+       * <code>bytes field10Material = 10;</code>
+       * @return The field10Material.
        */
       @java.lang.Override
-      public com.google.protobuf.ByteString getUnk10() {
-        return unk10_;
+      public com.google.protobuf.ByteString getField10Material() {
+        return field10Material_;
       }
       /**
-       * <code>bytes unk10 = 10;</code>
-       * @param value The unk10 to set.
+       * <code>bytes field10Material = 10;</code>
+       * @param value The field10Material to set.
        * @return This builder for chaining.
        */
-      public Builder setUnk10(com.google.protobuf.ByteString value) {
+      public Builder setField10Material(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        unk10_ = value;
+        field10Material_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bytes unk10 = 10;</code>
+       * <code>bytes field10Material = 10;</code>
        * @return This builder for chaining.
        */
-      public Builder clearUnk10() {
+      public Builder clearField10Material() {
         
-        unk10_ = getDefaultInstance().getUnk10();
+        field10Material_ = getDefaultInstance().getField10Material();
         onChanged();
         return this;
       }
@@ -1589,15 +1589,15 @@ public final class GetPlayerTokenReqOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\027GetPlayerTokenReq.proto\"\216\002\n\021GetPlayerT" +
+      "\n\027GetPlayerTokenReq.proto\"\225\002\n\021GetPlayerT" +
       "okenReq\022\017\n\007isGuest\030\001 \001(\010\022\022\n\naccountUid\030\002" +
       " \001(\014\022\023\n\013accountType\030\003 \001(\r\022\014\n\004unk4\030\004 \001(\010\022" +
       "\014\n\004unk5\030\005 \001(\004\022\014\n\004unk6\030\006 \001(\r\022\014\n\004unk7\030\007 \001(" +
-      "\r\022\014\n\004unk8\030\010 \001(\010\022\024\n\014accountToken\030\t \001(\t\022\r\n" +
-      "\005unk10\030\n \001(\014\022\r\n\005unk11\030\013 \001(\r\022\r\n\005unk12\030\014 \001" +
-      "(\r\022\024\n\014platformType\030\r \001(\r\022\r\n\005unk14\030\016 \001(\010\022" +
-      "\021\n\tchannelId\030\017 \001(\rB\033\n\031emu.grasscutter.ne" +
-      "t.protob\006proto3"
+      "\r\022\014\n\004unk8\030\010 \001(\010\022\021\n\tfield9Uid\030\t \001(\t\022\027\n\017fi" +
+      "eld10Material\030\n \001(\014\022\r\n\005unk11\030\013 \001(\r\022\r\n\005un" +
+      "k12\030\014 \001(\r\022\024\n\014platformType\030\r \001(\r\022\r\n\005unk14" +
+      "\030\016 \001(\010\022\021\n\tchannelId\030\017 \001(\rB\033\n\031emu.grasscu" +
+      "tter.net.protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1608,7 +1608,7 @@ public final class GetPlayerTokenReqOuterClass {
     internal_static_GetPlayerTokenReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_GetPlayerTokenReq_descriptor,
-        new java.lang.String[] { "IsGuest", "AccountUid", "AccountType", "Unk4", "Unk5", "Unk6", "Unk7", "Unk8", "AccountToken", "Unk10", "Unk11", "Unk12", "PlatformType", "Unk14", "ChannelId", });
+        new java.lang.String[] { "IsGuest", "AccountUid", "AccountType", "Unk4", "Unk5", "Unk6", "Unk7", "Unk8", "Field9Uid", "Field10Material", "Unk11", "Unk12", "PlatformType", "Unk14", "ChannelId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

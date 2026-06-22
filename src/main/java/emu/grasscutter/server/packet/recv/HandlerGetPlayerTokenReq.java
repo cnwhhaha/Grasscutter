@@ -2,6 +2,7 @@ package emu.grasscutter.server.packet.recv;
 
 import static emu.grasscutter.config.Configuration.ACCOUNT;
 
+import com.google.protobuf.ByteString;
 import emu.grasscutter.DebugConstants;
 import emu.grasscutter.Grasscutter;
 import emu.grasscutter.database.DatabaseHelper;
@@ -18,6 +19,15 @@ import emu.grasscutter.utils.DispatchUtils;
 
 @Opcodes(PacketOpcodes.GetPlayerTokenReq)
 public class HandlerGetPlayerTokenReq extends PacketHandler {
+    private static String toHex(ByteString data) {
+        var bytes = data.toByteArray();
+        var builder = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
+
     @Override
     public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
         var req = GetPlayerTokenReq.parseFrom(payload);
@@ -26,20 +36,25 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         if (accountUid.isBlank()) {
             accountUid = req.getAccountUid().toString().replace("\"", "");
         }
-        var accountToken = req.getAccountToken();
+        var field9Uid = req.getField9Uid();
+        var field10Material = req.getField10Material();
+        var field10MaterialUtf8 = field10Material.toStringUtf8();
 
         Grasscutter.getLogger()
                 .info(
-                        "GetPlayerTokenReq accountUid={} accountType={} platformType={} channelId={} isGuest={} tokenLen={} unk10Len={}",
+                        "GetPlayerTokenReq accountUid={} field9Uid={} accountType={} platformType={} channelId={} isGuest={} field10Utf8={} field10RawHex={} field10Len={}",
                         accountUid,
+                        field9Uid,
                         req.getAccountType(),
                         req.getPlatformType(),
                         req.getChannelId(),
                         req.getIsGuest(),
-                        accountToken.length(),
-                        req.getUnk10().size());
+                        field10MaterialUtf8,
+                        toHex(field10Material),
+                        field10Material.size());
 
-        var accountId = accountUid;
+        var accountId = !field9Uid.isBlank() ? field9Uid : accountUid;
+        var accountToken = field10MaterialUtf8;
         var account = DispatchUtils.authenticate(accountId, accountToken);
 
         if (account == null && !DebugConstants.ACCEPT_CLIENT_TOKEN) {
