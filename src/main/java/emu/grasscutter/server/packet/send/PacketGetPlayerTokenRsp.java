@@ -1,6 +1,8 @@
 package emu.grasscutter.server.packet.send;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import emu.grasscutter.net.packet.*;
 import emu.grasscutter.net.proto.GetPlayerTokenReqOuterClass.GetPlayerTokenReq;
 import emu.grasscutter.net.proto.GetPlayerTokenRspOuterClass.GetPlayerTokenRsp;
@@ -80,6 +82,17 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         writeVarint(out, 1);
     }
 
+    private static byte[] buildSecretKeyBuffer(GameSession session) {
+        var staticBuffer = Crypto.ENCRYPT_SEED_BUFFER;
+        if (staticBuffer == null || staticBuffer.length < Long.BYTES) {
+            return staticBuffer;
+        }
+
+        var buffer = staticBuffer.clone();
+        ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).putLong(session.getEncryptSeed());
+        return buffer;
+    }
+
     private static byte[] buildRawTokenRsp(GameSession session, GetPlayerTokenReq req) {
         var out = new ByteArrayOutputStream(256);
 
@@ -88,8 +101,10 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         writeUInt32(out, 6, req.getAccountType());
         writeBool(out, 8, session.getPlayer().getAvatars().getAvatarCount() > 0);
         writeUInt32(out, 10, 0);
-        writeBytes(out, 12, Crypto.ENCRYPT_SEED_BUFFER);
+        writeUInt64(out, 11, session.getEncryptSeed());
+        writeBytes(out, 12, buildSecretKeyBuffer(session));
         writeUInt64(out, 13, resolvePlatformType(req));
+        writeString(out, 19, DEFAULT_COUNTRY_CODE);
         writeUInt32(out, 16, resolveChannelId(req));
         writeString(out, 22, DEFAULT_CPS);
         writeUInt32(out, 23, 1);
