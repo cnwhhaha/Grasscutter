@@ -74,6 +74,26 @@ public class GameSession implements GameSessionManager.KcpChannel {
         return sb.toString().trim();
     }
 
+    private static int readPacketMagic(byte[] bytes) {
+        if (bytes == null || bytes.length < 2) return -1;
+        return ((bytes[0] & 0xFF) << 8) | (bytes[1] & 0xFF);
+    }
+
+    private static byte[] xorCopy(byte[] bytes, byte[] key) {
+        var copy = bytes.clone();
+        Crypto.xor(copy, key);
+        return copy;
+    }
+
+    private boolean shouldEncryptWithDispatchKey(BasePacket packet) {
+        if (packet.useDispatchKey()) return true;
+
+        // 4.8 keeps sending keepalive pings under the dispatch key after GetPlayerTokenRsp.
+        // Replying with the session key here leaves the client waiting forever before PlayerLoginReq.
+        return this.state == SessionState.WAITING_FOR_LOGIN
+            && packet.getOpcode() == PacketOpcodes.PingRsp;
+    }
+
     public GameSession(GameServer server) {
         this.server = server;
         this.state = SessionState.WAITING_FOR_TOKEN;
@@ -207,7 +227,12 @@ public class GameSession implements GameSessionManager.KcpChannel {
                     + " len=" + bytes.length + " encrypt=" + packet.shouldEncrypt);
                 if (packet.shouldEncrypt) {
                     if (Grasscutter.getConfig().server.game.useXorEncryption) {
-                        Crypto.xor(bytes, packet.useDispatchKey() ? Crypto.DISPATCH_KEY : this.encryptKey);
+                        boolean useDispatchForSend = shouldEncryptWithDispatchKey(packet);
+                        sessionLog("ENCRYPT: using "
+                            + (useDispatchForSend ? "DISPATCH_KEY" : "encryptKey")
+                            + " opcode=" + packet.getOpcode()
+                            + " state=" + state);
+                        Crypto.xor(bytes, useDispatchForSend ? Crypto.DISPATCH_KEY : this.encryptKey);
                     }
                 }
                 tunnel.writeData(bytes);
@@ -234,10 +259,33 @@ public class GameSession implements GameSessionManager.KcpChannel {
 
         // Decrypt and turn back into a packet
         if (Grasscutter.getConfig().server.game.useXorEncryption) {
-            byte[] keyUsed = useSecretKey() ? this.encryptKey : Crypto.DISPATCH_KEY;
-            sessionLog("DECRYPT: using " + (useSecretKey() ? "encryptKey(len=" + encryptKey.length + ")" : "DISPATCH_KEY(len=" + Crypto.DISPATCH_KEY.length + ")"));
-            Crypto.xor(bytes, keyUsed);
-            sessionLog("DECRYPT done: firstBytes=" + bytesToHex(bytes, 32));
+            if (useSecretKey()) {
+                var sessionDecoded = xorCopy(bytes, this.encryptKey);
+                sessionLog("DECRYPT probe: encryptKey(len=" + encryptKey.length + ") magic="
+                    + readPacketMagic(sessionDecoded) + " firstBytes=" + bytesToHex(sessionDecoded, 16));
+
+                if (readPacketMagic(sessionDecoded) == 17767) {
+                    bytes = sessionDecoded;
+                    sessionLog("DECRYPT selected: encryptKey firstBytes=" + bytesToHex(bytes, 32));
+                } else {
+                    var dispatchDecoded = xorCopy(bytes, Crypto.DISPATCH_KEY);
+                    sessionLog("DECRYPT probe: DISPATCH_KEY(len=" + Crypto.DISPATCH_KEY.length + ") magic="
+                        + readPacketMagic(dispatchDecoded) + " firstBytes=" + bytesToHex(dispatchDecoded, 16));
+
+                    if (readPacketMagic(dispatchDecoded) == 17767) {
+                        bytes = dispatchDecoded;
+                        sessionLog("DECRYPT selected: DISPATCH_KEY while useSecretKey=true firstBytes="
+                            + bytesToHex(bytes, 32));
+                    } else {
+                        bytes = sessionDecoded;
+                        sessionLog("DECRYPT selected: encryptKey fallback firstBytes=" + bytesToHex(bytes, 32));
+                    }
+                }
+            } else {
+                sessionLog("DECRYPT: using DISPATCH_KEY(len=" + Crypto.DISPATCH_KEY.length + ")");
+                Crypto.xor(bytes, Crypto.DISPATCH_KEY);
+                sessionLog("DECRYPT done: firstBytes=" + bytesToHex(bytes, 32));
+            }
         }
         ByteBuf packet = Unpooled.wrappedBuffer(bytes);
 

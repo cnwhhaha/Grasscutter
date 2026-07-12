@@ -1,15 +1,17 @@
 package emu.grasscutter.server.packet.send;
 
+import emu.grasscutter.net.proto.GetPlayerTokenRspOuterClass.GetPlayerTokenRsp;
+import emu.grasscutter.utils.Utils;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import emu.grasscutter.net.packet.*;
 import emu.grasscutter.net.proto.GetPlayerTokenReqOuterClass.GetPlayerTokenReq;
-import emu.grasscutter.net.proto.GetPlayerTokenRspOuterClass.GetPlayerTokenRsp;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.utils.Crypto;
 
-public class PacketGetPlayerTokenRsp extends BasePacket {
+public class PacketGetPlayerTokenRsp_4_8_attempt extends BasePacket {
     private static final String DEFAULT_COUNTRY_CODE = "US";
     private static final String DEFAULT_CPS = "mihoyo";
 
@@ -82,81 +84,108 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         writeVarint(out, 1);
     }
 
-    private static byte[] buildSecretKeyBuffer(GameSession session) {
-        var staticBuffer = Crypto.ENCRYPT_SEED_BUFFER;
-        if (staticBuffer == null || staticBuffer.length < Long.BYTES) {
-            return staticBuffer;
-        }
-
-        var buffer = staticBuffer.clone();
-        ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).putLong(session.getEncryptSeed());
-        return buffer;
-    }
-
     /**
-     * Build GetPlayerTokenRsp for 4.8.0 client with RSA key exchange.
-     * Field mapping based on field_meaning_hypothesis.md + IDA analysis.
+     * Build GetPlayerTokenRsp for 4.8.0 client with correct field mapping from IDA analysis.
+     * Field mapping based on sub_14BEBF530 (Table 2) analysis.
      */
     private static byte[] buildRawTokenRsp_4_8(
             GameSession session,
             GetPlayerTokenReq req,
             String serverRandKey,
             String sign) {
-        var out = new ByteArrayOutputStream(512);
+        var out = new ByteArrayOutputStream(1024);
 
-        // Field 1: retcode (varint)
-        writeUInt32(out, 1, 0);  // 0 = success
+        // Field 1: retcode (varint) - 0 = success
+        writeUInt32(out, 1, 0);
 
-        // Field 3: uid (varint)
-        writeUInt32(out, 3, session.getPlayer().getUid());
+        // Field 2: secret_key_seed (varint) - encrypt seed
+        writeUInt64(out, 2, session.getEncryptSeed());
+
+        // Field 3: sub-message (len-delim) - complex structure
+        // Placeholder - needs proper sub-message implementation
+        writeTag(out, 3, 2);
+        writeVarint(out, 0);
 
         // Field 4: account_type (varint) - 4.8 uses varint, not string
         writeUInt32(out, 4, req.getAccountType());
 
-        // Field 5: is_proficient (varint/bool) - has avatars
-        writeBool(out, 5, session.getPlayer().getAvatars().getAvatarCount() > 0);
+        // Field 5: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 5, 0);
 
-        // Field 6: account_token (string) - account token
-        writeString(out, 6, session.getAccount().getToken());
+        // Field 6: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 6, 0);
 
-        // Field 10: is_proficient (varint/bool) - duplicate?
-        writeBool(out, 10, session.getPlayer().getAvatars().getAvatarCount() > 0);
+        // Field 7: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 7, 0);
 
-        // Field 11: server_rand_key (string, base64) - RSA encrypted
+        // Field 8: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 8, 0);
+
+        // Field 9: server_rand_key (bytes) - RSA encrypted seedBytes
         if (serverRandKey != null && !serverRandKey.isBlank()) {
-            writeString(out, 11, serverRandKey);
+            byte[] serverRandKeyBytes = Utils.base64Decode(serverRandKey);
+            writeBytes(out, 9, serverRandKeyBytes);
         }
 
-        // Field 12: secret_key_seed (varint) - encrypt seed
-        writeUInt64(out, 12, session.getEncryptSeed());
+        // Field 10: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 10, 0);
 
-        // Field 13: platform_type (varint)
+        // Field 11: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 11, 0);
+
+        // Field 12: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 12, 0);
+
+        // Field 13: platform_type (varint) - confirmed match
         writeUInt64(out, 13, resolvePlatformType(req));
 
-        // Field 16: channel_id (varint)
-        writeUInt32(out, 16, resolveChannelId(req));
+        // Field 14: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 14, 0);
 
-        // Field 17: sign (string, base64) - RSA signature
+        // Field 15: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 15, 0);
+
+        // Field 16: sub-message (len-delim) - complex structure
+        // Placeholder - needs proper sub-message implementation
+        writeTag(out, 16, 2);
+        writeVarint(out, 0);
+
+        // Field 17: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 17, 0);
+
+        // Field 19: ??? (varint) - NOT string! - wire type conflict fixed
+        writeUInt32(out, 19, 0);
+
+        // Field 22: sub-message (len-delim) - complex structure
+        // Placeholder - needs proper sub-message implementation
+        writeTag(out, 22, 2);
+        writeVarint(out, 0);
+
+        // Field 24: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 24, 0);
+
+        // Field 25: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 25, 0);
+
+        // Field 26: sign (bytes) - RSA signature of seedBytes
         if (sign != null && !sign.isBlank()) {
-            writeString(out, 17, sign);
+            byte[] signBytes = Utils.base64Decode(sign);
+            writeBytes(out, 26, signBytes);
         }
 
-        // Field 22: security_cmd_buffer (string, complex)
-        writeString(out, 22, DEFAULT_CPS);
+        // Field 27: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 27, 0);
 
-        // Field 23: ??? (varint)
-        writeUInt32(out, 23, 1);
+        // Field 28: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 28, 0);
 
-        // Field 24: client_ip (string)
-        var address = session.getAddress();
-        if (address != null && address.getAddress() != null) {
-            writeString(out, 24, address.getAddress().getHostAddress());
-        }
+        // Field 29: ??? (varint) - unknown, placeholder
+        writeUInt32(out, 29, 0);
 
         return out.toByteArray();
     }
 
-    public PacketGetPlayerTokenRsp(GameSession session, GetPlayerTokenReq req, String serverRandKey, String sign) {
+    public PacketGetPlayerTokenRsp_4_8_attempt(GameSession session, GetPlayerTokenReq req, String serverRandKey, String sign) {
         super(PacketOpcodes.GetPlayerTokenRsp, true);
 
         this.setUseDispatchKey(true);
@@ -165,7 +194,7 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
     }
 
     // Fallback constructor for error cases (uses old proto)
-    public PacketGetPlayerTokenRsp(GameSession session, int retcode, String msg, int blackEndTime) {
+    public PacketGetPlayerTokenRsp_4_8_attempt(GameSession session, int retcode, String msg, int blackEndTime) {
         super(PacketOpcodes.GetPlayerTokenRsp, true);
 
         this.setUseDispatchKey(true);

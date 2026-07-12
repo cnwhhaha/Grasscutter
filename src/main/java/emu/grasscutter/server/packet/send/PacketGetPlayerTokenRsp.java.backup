@@ -93,61 +93,22 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         return buffer;
     }
 
-    /**
-     * Build GetPlayerTokenRsp for 4.8.0 client with RSA key exchange.
-     * Field mapping based on field_meaning_hypothesis.md + IDA analysis.
-     */
-    private static byte[] buildRawTokenRsp_4_8(
-            GameSession session,
-            GetPlayerTokenReq req,
-            String serverRandKey,
-            String sign) {
-        var out = new ByteArrayOutputStream(512);
+    private static byte[] buildRawTokenRsp(GameSession session, GetPlayerTokenReq req) {
+        var out = new ByteArrayOutputStream(256);
 
-        // Field 1: retcode (varint)
-        writeUInt32(out, 1, 0);  // 0 = success
-
-        // Field 3: uid (varint)
         writeUInt32(out, 3, session.getPlayer().getUid());
-
-        // Field 4: account_type (varint) - 4.8 uses varint, not string
-        writeUInt32(out, 4, req.getAccountType());
-
-        // Field 5: is_proficient (varint/bool) - has avatars
-        writeBool(out, 5, session.getPlayer().getAvatars().getAvatarCount() > 0);
-
-        // Field 6: account_token (string) - account token
-        writeString(out, 6, session.getAccount().getToken());
-
-        // Field 10: is_proficient (varint/bool) - duplicate?
-        writeBool(out, 10, session.getPlayer().getAvatars().getAvatarCount() > 0);
-
-        // Field 11: server_rand_key (string, base64) - RSA encrypted
-        if (serverRandKey != null && !serverRandKey.isBlank()) {
-            writeString(out, 11, serverRandKey);
-        }
-
-        // Field 12: secret_key_seed (varint) - encrypt seed
-        writeUInt64(out, 12, session.getEncryptSeed());
-
-        // Field 13: platform_type (varint)
+        writeString(out, 4, session.getAccount().getToken());
+        writeUInt32(out, 6, req.getAccountType());
+        writeBool(out, 8, session.getPlayer().getAvatars().getAvatarCount() > 0);
+        writeUInt32(out, 10, 0);
+        writeUInt64(out, 11, session.getEncryptSeed());
+        writeBytes(out, 12, buildSecretKeyBuffer(session));
         writeUInt64(out, 13, resolvePlatformType(req));
-
-        // Field 16: channel_id (varint)
+        writeString(out, 19, DEFAULT_COUNTRY_CODE);
         writeUInt32(out, 16, resolveChannelId(req));
-
-        // Field 17: sign (string, base64) - RSA signature
-        if (sign != null && !sign.isBlank()) {
-            writeString(out, 17, sign);
-        }
-
-        // Field 22: security_cmd_buffer (string, complex)
         writeString(out, 22, DEFAULT_CPS);
-
-        // Field 23: ??? (varint)
         writeUInt32(out, 23, 1);
 
-        // Field 24: client_ip (string)
         var address = session.getAddress();
         if (address != null && address.getAddress() != null) {
             writeString(out, 24, address.getAddress().getHostAddress());
@@ -156,15 +117,14 @@ public class PacketGetPlayerTokenRsp extends BasePacket {
         return out.toByteArray();
     }
 
-    public PacketGetPlayerTokenRsp(GameSession session, GetPlayerTokenReq req, String serverRandKey, String sign) {
+    public PacketGetPlayerTokenRsp(GameSession session, GetPlayerTokenReq req) {
         super(PacketOpcodes.GetPlayerTokenRsp, true);
 
         this.setUseDispatchKey(true);
 
-        this.setData(buildRawTokenRsp_4_8(session, req, serverRandKey, sign));
+        this.setData(buildRawTokenRsp(session, req));
     }
 
-    // Fallback constructor for error cases (uses old proto)
     public PacketGetPlayerTokenRsp(GameSession session, int retcode, String msg, int blackEndTime) {
         super(PacketOpcodes.GetPlayerTokenRsp, true);
 
