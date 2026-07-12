@@ -17,7 +17,7 @@ import emu.grasscutter.net.proto.GetPlayerTokenReqOuterClass.GetPlayerTokenReq;
 import emu.grasscutter.server.event.game.PlayerCreationEvent;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.game.GameSession.SessionState;
-import emu.grasscutter.server.packet.send.PacketGetPlayerTokenRsp_4_8_attempt;
+import emu.grasscutter.server.packet.send.PacketGetPlayerTokenRsp;
 import emu.grasscutter.utils.DispatchUtils;
 import emu.grasscutter.utils.Utils;
 import emu.grasscutter.utils.Crypto;
@@ -184,7 +184,7 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         if (session.getAccount().isBanned()) {
             session.setState(SessionState.ACCOUNT_BANNED);
             session.send(
-                    new PacketGetPlayerTokenRsp_4_8_attempt(
+                    new PacketGetPlayerTokenRsp(
                             session, 21, "FORBID_CHEATING_PLUGINS", session.getAccount().getBanEndTime()));
             return;
         }
@@ -254,7 +254,7 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         }
 
         // Send response
-        session.send(new PacketGetPlayerTokenRsp_4_8_attempt(session, req, serverRandKey, sign));
+        session.send(new PacketGetPlayerTokenRsp(session, req, serverRandKey, sign));
         session.setUseSecretKey(true);
 
         Grasscutter.getLogger()
