@@ -26,75 +26,14 @@ import emu.grasscutter.utils.Crypto;
 public class HandlerGetPlayerTokenReq extends PacketHandler {
 
     /**
-     * Read varint from protobuf data.
+     * Extract field 450 (client_rand_key) and field 1226 (key_id) directly from
+     * the parsed GetPlayerTokenReq proto message (fields confirmed against the
+     * 4.8.0 client dump in `4.8proto-work/4.8.proto`, message CLJNMLBEIHN).
      */
-    private static int readVarint(byte[] data, int[] offsetRef) {
-        int result = 0;
-        int shift = 0;
-        int idx = offsetRef[0];
-        while (idx < data.length) {
-            byte b = data[idx++];
-            result |= ((b & 0x7F) << shift);
-            if ((b & 0x80) == 0) {
-                offsetRef[0] = idx;
-                return result;
-            }
-            shift += 7;
-        }
-        throw new RuntimeException("Invalid varint");
-    }
-
-    /**
-     * Read string (length-delimited) from protobuf data.
-     */
-    private static String readString(byte[] data, int[] offsetRef) {
-        int length = readVarint(data, offsetRef);
-        String str = new String(data, offsetRef[0], length, java.nio.charset.StandardCharsets.UTF_8);
-        offsetRef[0] += length;
-        return str;
-    }
-
-    /**
-     * Skip a protobuf field.
-     */
-    private static void skipField(byte[] data, int[] offsetRef, int wireType) {
-        if (wireType == 0) { // varint
-            readVarint(data, offsetRef);
-        } else if (wireType == 1) { // 64-bit
-            offsetRef[0] += 8;
-        } else if (wireType == 2) { // length-delimited
-            int length = readVarint(data, offsetRef);
-            offsetRef[0] += length;
-        } else if (wireType == 5) { // 32-bit
-            offsetRef[0] += 4;
-        } else {
-            throw new RuntimeException("Unknown wire type: " + wireType);
-        }
-    }
-
-    /**
-     * Extract field 450 (client_rand_key) and field 1226 (key_id) from raw protobuf data.
-     */
-    private static KeyExchangeData extractKeyExchangeData(byte[] payload) {
-        int[] offset = {0};
-        String clientRandKey = null;
-        int keyId = 0;
-
-        while (offset[0] < payload.length) {
-            int tag = readVarint(payload, offset);
-            int fieldNum = tag >> 3;
-            int wireType = tag & 0x07;
-
-            if (fieldNum == 450) {
-                clientRandKey = readString(payload, offset);
-            } else if (fieldNum == 1226) {
-                keyId = readVarint(payload, offset);
-            } else {
-                skipField(payload, offset, wireType);
-            }
-        }
-
-        return new KeyExchangeData(clientRandKey, keyId);
+    private static KeyExchangeData extractKeyExchangeData(GetPlayerTokenReq req) {
+        String clientRandKey = req.getField450ClientRandKey();
+        int keyId = req.getField1226KeyId();
+        return new KeyExchangeData(clientRandKey.isBlank() ? null : clientRandKey, keyId);
     }
 
     private static class KeyExchangeData {
@@ -198,8 +137,8 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         String sign = null;
 
         try {
-            // Extract client_rand_key and key_id from raw payload
-            var keyExchangeData = extractKeyExchangeData(payload);
+            // Extract client_rand_key and key_id from the parsed proto message
+            var keyExchangeData = extractKeyExchangeData(req);
             Grasscutter.getLogger().info(
                     "Key exchange: keyId={}, clientRandKeyLen={}",
                     keyExchangeData.keyId,
@@ -242,7 +181,7 @@ public class HandlerGetPlayerTokenReq extends PacketHandler {
         } catch (Exception e) {
             Grasscutter.getLogger().warn("Key exchange failed, using fallback", e);
             // Fallback for UA Patch users (from 4.0)
-            var keyExchangeData = extractKeyExchangeData(payload);
+            var keyExchangeData = extractKeyExchangeData(req);
             if (keyExchangeData.clientRandKey != null) {
                 var encryptSeed = session.getEncryptSeed();
                 var clientBytes = Utils.base64Decode(keyExchangeData.clientRandKey);

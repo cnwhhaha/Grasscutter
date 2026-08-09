@@ -113,8 +113,111 @@ public final class GetPlayerTokenReqOuterClass {
      * @return The channelId.
      */
     int getChannelId();
+
+    /**
+     * <code>uint32 unk43 = 43;</code>
+     * @return The unk43.
+     */
+    int getUnk43();
+
+    /**
+     * <code>string unk251 = 251;</code>
+     * @return The unk251.
+     */
+    java.lang.String getUnk251();
+    /**
+     * <code>string unk251 = 251;</code>
+     * @return The bytes for unk251.
+     */
+    com.google.protobuf.ByteString
+        getUnk251Bytes();
+
+    /**
+     * <code>string unk307 = 307;</code>
+     * @return The unk307.
+     */
+    java.lang.String getUnk307();
+    /**
+     * <code>string unk307 = 307;</code>
+     * @return The bytes for unk307.
+     */
+    com.google.protobuf.ByteString
+        getUnk307Bytes();
+
+    /**
+     * <pre>
+     * client_rand_key (base64), already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>string field450ClientRandKey = 450;</code>
+     * @return The field450ClientRandKey.
+     */
+    java.lang.String getField450ClientRandKey();
+    /**
+     * <pre>
+     * client_rand_key (base64), already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>string field450ClientRandKey = 450;</code>
+     * @return The bytes for field450ClientRandKey.
+     */
+    com.google.protobuf.ByteString
+        getField450ClientRandKeyBytes();
+
+    /**
+     * <code>uint32 unk470 = 470;</code>
+     * @return The unk470.
+     */
+    int getUnk470();
+
+    /**
+     * <pre>
+     * RSA key id, already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>uint32 field1226KeyId = 1226;</code>
+     * @return The field1226KeyId.
+     */
+    int getField1226KeyId();
+
+    /**
+     * <code>string unk1419 = 1419;</code>
+     * @return The unk1419.
+     */
+    java.lang.String getUnk1419();
+    /**
+     * <code>string unk1419 = 1419;</code>
+     * @return The bytes for unk1419.
+     */
+    com.google.protobuf.ByteString
+        getUnk1419Bytes();
+
+    /**
+     * <code>uint32 unk1465 = 1465;</code>
+     * @return The unk1465.
+     */
+    int getUnk1465();
+
+    /**
+     * <code>uint32 unk1548 = 1548;</code>
+     * @return The unk1548.
+     */
+    int getUnk1548();
   }
   /**
+   * <pre>
+   * Field layout confirmed against client dump `4.8proto-work/4.8.proto`
+   * (message CLJNMLBEIHN, CmdId: 4210, WriteTo: 0x71D99B0) and cross-checked
+   * against real packet capture (result-0711-1150/payload_dump). Field 9/10
+   * meanings (uid / material) confirmed from capture; 43/251/307/450/470/
+   * 1226/1419/1465/1548 are additional fields seen in the dump that were
+   * missing before. Names for the newly-added fields are still generic
+   * (unk*) since their obfuscated names carry no semantic info.
+   * </pre>
+   *
    * Protobuf type {@code GetPlayerTokenReq}
    */
   public static final class GetPlayerTokenReq extends
@@ -130,6 +233,10 @@ public final class GetPlayerTokenReqOuterClass {
       accountUid_ = com.google.protobuf.ByteString.EMPTY;
       field9Uid_ = "";
       field10Material_ = com.google.protobuf.ByteString.EMPTY;
+      unk251_ = "";
+      unk307_ = "";
+      field450ClientRandKey_ = "";
+      unk1419_ = "";
     }
 
     @java.lang.Override
@@ -236,6 +343,55 @@ public final class GetPlayerTokenReqOuterClass {
             case 120: {
 
               channelId_ = input.readUInt32();
+              break;
+            }
+            case 344: {
+
+              unk43_ = input.readUInt32();
+              break;
+            }
+            case 2010: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              unk251_ = s;
+              break;
+            }
+            case 2458: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              unk307_ = s;
+              break;
+            }
+            case 3602: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              field450ClientRandKey_ = s;
+              break;
+            }
+            case 3760: {
+
+              unk470_ = input.readUInt32();
+              break;
+            }
+            case 9808: {
+
+              field1226KeyId_ = input.readUInt32();
+              break;
+            }
+            case 11354: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              unk1419_ = s;
+              break;
+            }
+            case 11720: {
+
+              unk1465_ = input.readUInt32();
+              break;
+            }
+            case 12384: {
+
+              unk1548_ = input.readUInt32();
               break;
             }
             default: {
@@ -462,6 +618,228 @@ public final class GetPlayerTokenReqOuterClass {
       return channelId_;
     }
 
+    public static final int UNK43_FIELD_NUMBER = 43;
+    private int unk43_;
+    /**
+     * <code>uint32 unk43 = 43;</code>
+     * @return The unk43.
+     */
+    @java.lang.Override
+    public int getUnk43() {
+      return unk43_;
+    }
+
+    public static final int UNK251_FIELD_NUMBER = 251;
+    private volatile java.lang.Object unk251_;
+    /**
+     * <code>string unk251 = 251;</code>
+     * @return The unk251.
+     */
+    @java.lang.Override
+    public java.lang.String getUnk251() {
+      java.lang.Object ref = unk251_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        unk251_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string unk251 = 251;</code>
+     * @return The bytes for unk251.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUnk251Bytes() {
+      java.lang.Object ref = unk251_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        unk251_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UNK307_FIELD_NUMBER = 307;
+    private volatile java.lang.Object unk307_;
+    /**
+     * <code>string unk307 = 307;</code>
+     * @return The unk307.
+     */
+    @java.lang.Override
+    public java.lang.String getUnk307() {
+      java.lang.Object ref = unk307_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        unk307_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string unk307 = 307;</code>
+     * @return The bytes for unk307.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUnk307Bytes() {
+      java.lang.Object ref = unk307_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        unk307_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FIELD450CLIENTRANDKEY_FIELD_NUMBER = 450;
+    private volatile java.lang.Object field450ClientRandKey_;
+    /**
+     * <pre>
+     * client_rand_key (base64), already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>string field450ClientRandKey = 450;</code>
+     * @return The field450ClientRandKey.
+     */
+    @java.lang.Override
+    public java.lang.String getField450ClientRandKey() {
+      java.lang.Object ref = field450ClientRandKey_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        field450ClientRandKey_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * client_rand_key (base64), already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>string field450ClientRandKey = 450;</code>
+     * @return The bytes for field450ClientRandKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getField450ClientRandKeyBytes() {
+      java.lang.Object ref = field450ClientRandKey_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        field450ClientRandKey_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UNK470_FIELD_NUMBER = 470;
+    private int unk470_;
+    /**
+     * <code>uint32 unk470 = 470;</code>
+     * @return The unk470.
+     */
+    @java.lang.Override
+    public int getUnk470() {
+      return unk470_;
+    }
+
+    public static final int FIELD1226KEYID_FIELD_NUMBER = 1226;
+    private int field1226KeyId_;
+    /**
+     * <pre>
+     * RSA key id, already parsed manually in
+     * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+     * </pre>
+     *
+     * <code>uint32 field1226KeyId = 1226;</code>
+     * @return The field1226KeyId.
+     */
+    @java.lang.Override
+    public int getField1226KeyId() {
+      return field1226KeyId_;
+    }
+
+    public static final int UNK1419_FIELD_NUMBER = 1419;
+    private volatile java.lang.Object unk1419_;
+    /**
+     * <code>string unk1419 = 1419;</code>
+     * @return The unk1419.
+     */
+    @java.lang.Override
+    public java.lang.String getUnk1419() {
+      java.lang.Object ref = unk1419_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        unk1419_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string unk1419 = 1419;</code>
+     * @return The bytes for unk1419.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUnk1419Bytes() {
+      java.lang.Object ref = unk1419_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        unk1419_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UNK1465_FIELD_NUMBER = 1465;
+    private int unk1465_;
+    /**
+     * <code>uint32 unk1465 = 1465;</code>
+     * @return The unk1465.
+     */
+    @java.lang.Override
+    public int getUnk1465() {
+      return unk1465_;
+    }
+
+    public static final int UNK1548_FIELD_NUMBER = 1548;
+    private int unk1548_;
+    /**
+     * <code>uint32 unk1548 = 1548;</code>
+     * @return The unk1548.
+     */
+    @java.lang.Override
+    public int getUnk1548() {
+      return unk1548_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -520,6 +898,33 @@ public final class GetPlayerTokenReqOuterClass {
       }
       if (channelId_ != 0) {
         output.writeUInt32(15, channelId_);
+      }
+      if (unk43_ != 0) {
+        output.writeUInt32(43, unk43_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk251_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 251, unk251_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk307_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 307, unk307_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(field450ClientRandKey_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 450, field450ClientRandKey_);
+      }
+      if (unk470_ != 0) {
+        output.writeUInt32(470, unk470_);
+      }
+      if (field1226KeyId_ != 0) {
+        output.writeUInt32(1226, field1226KeyId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk1419_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1419, unk1419_);
+      }
+      if (unk1465_ != 0) {
+        output.writeUInt32(1465, unk1465_);
+      }
+      if (unk1548_ != 0) {
+        output.writeUInt32(1548, unk1548_);
       }
       unknownFields.writeTo(output);
     }
@@ -589,6 +994,38 @@ public final class GetPlayerTokenReqOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(15, channelId_);
       }
+      if (unk43_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(43, unk43_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk251_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(251, unk251_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk307_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(307, unk307_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(field450ClientRandKey_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(450, field450ClientRandKey_);
+      }
+      if (unk470_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(470, unk470_);
+      }
+      if (field1226KeyId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1226, field1226KeyId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(unk1419_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1419, unk1419_);
+      }
+      if (unk1465_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1465, unk1465_);
+      }
+      if (unk1548_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1548, unk1548_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -634,6 +1071,24 @@ public final class GetPlayerTokenReqOuterClass {
           != other.getUnk14()) return false;
       if (getChannelId()
           != other.getChannelId()) return false;
+      if (getUnk43()
+          != other.getUnk43()) return false;
+      if (!getUnk251()
+          .equals(other.getUnk251())) return false;
+      if (!getUnk307()
+          .equals(other.getUnk307())) return false;
+      if (!getField450ClientRandKey()
+          .equals(other.getField450ClientRandKey())) return false;
+      if (getUnk470()
+          != other.getUnk470()) return false;
+      if (getField1226KeyId()
+          != other.getField1226KeyId()) return false;
+      if (!getUnk1419()
+          .equals(other.getUnk1419())) return false;
+      if (getUnk1465()
+          != other.getUnk1465()) return false;
+      if (getUnk1548()
+          != other.getUnk1548()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -680,6 +1135,24 @@ public final class GetPlayerTokenReqOuterClass {
           getUnk14());
       hash = (37 * hash) + CHANNELID_FIELD_NUMBER;
       hash = (53 * hash) + getChannelId();
+      hash = (37 * hash) + UNK43_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk43();
+      hash = (37 * hash) + UNK251_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk251().hashCode();
+      hash = (37 * hash) + UNK307_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk307().hashCode();
+      hash = (37 * hash) + FIELD450CLIENTRANDKEY_FIELD_NUMBER;
+      hash = (53 * hash) + getField450ClientRandKey().hashCode();
+      hash = (37 * hash) + UNK470_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk470();
+      hash = (37 * hash) + FIELD1226KEYID_FIELD_NUMBER;
+      hash = (53 * hash) + getField1226KeyId();
+      hash = (37 * hash) + UNK1419_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk1419().hashCode();
+      hash = (37 * hash) + UNK1465_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk1465();
+      hash = (37 * hash) + UNK1548_FIELD_NUMBER;
+      hash = (53 * hash) + getUnk1548();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -776,6 +1249,16 @@ public final class GetPlayerTokenReqOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Field layout confirmed against client dump `4.8proto-work/4.8.proto`
+     * (message CLJNMLBEIHN, CmdId: 4210, WriteTo: 0x71D99B0) and cross-checked
+     * against real packet capture (result-0711-1150/payload_dump). Field 9/10
+     * meanings (uid / material) confirmed from capture; 43/251/307/450/470/
+     * 1226/1419/1465/1548 are additional fields seen in the dump that were
+     * missing before. Names for the newly-added fields are still generic
+     * (unk*) since their obfuscated names carry no semantic info.
+     * </pre>
+     *
      * Protobuf type {@code GetPlayerTokenReq}
      */
     public static final class Builder extends
@@ -843,6 +1326,24 @@ public final class GetPlayerTokenReqOuterClass {
 
         channelId_ = 0;
 
+        unk43_ = 0;
+
+        unk251_ = "";
+
+        unk307_ = "";
+
+        field450ClientRandKey_ = "";
+
+        unk470_ = 0;
+
+        field1226KeyId_ = 0;
+
+        unk1419_ = "";
+
+        unk1465_ = 0;
+
+        unk1548_ = 0;
+
         return this;
       }
 
@@ -884,6 +1385,15 @@ public final class GetPlayerTokenReqOuterClass {
         result.platformType_ = platformType_;
         result.unk14_ = unk14_;
         result.channelId_ = channelId_;
+        result.unk43_ = unk43_;
+        result.unk251_ = unk251_;
+        result.unk307_ = unk307_;
+        result.field450ClientRandKey_ = field450ClientRandKey_;
+        result.unk470_ = unk470_;
+        result.field1226KeyId_ = field1226KeyId_;
+        result.unk1419_ = unk1419_;
+        result.unk1465_ = unk1465_;
+        result.unk1548_ = unk1548_;
         onBuilt();
         return result;
       }
@@ -977,6 +1487,37 @@ public final class GetPlayerTokenReqOuterClass {
         }
         if (other.getChannelId() != 0) {
           setChannelId(other.getChannelId());
+        }
+        if (other.getUnk43() != 0) {
+          setUnk43(other.getUnk43());
+        }
+        if (!other.getUnk251().isEmpty()) {
+          unk251_ = other.unk251_;
+          onChanged();
+        }
+        if (!other.getUnk307().isEmpty()) {
+          unk307_ = other.unk307_;
+          onChanged();
+        }
+        if (!other.getField450ClientRandKey().isEmpty()) {
+          field450ClientRandKey_ = other.field450ClientRandKey_;
+          onChanged();
+        }
+        if (other.getUnk470() != 0) {
+          setUnk470(other.getUnk470());
+        }
+        if (other.getField1226KeyId() != 0) {
+          setField1226KeyId(other.getField1226KeyId());
+        }
+        if (!other.getUnk1419().isEmpty()) {
+          unk1419_ = other.unk1419_;
+          onChanged();
+        }
+        if (other.getUnk1465() != 0) {
+          setUnk1465(other.getUnk1465());
+        }
+        if (other.getUnk1548() != 0) {
+          setUnk1548(other.getUnk1548());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1522,6 +2063,505 @@ public final class GetPlayerTokenReqOuterClass {
         onChanged();
         return this;
       }
+
+      private int unk43_ ;
+      /**
+       * <code>uint32 unk43 = 43;</code>
+       * @return The unk43.
+       */
+      @java.lang.Override
+      public int getUnk43() {
+        return unk43_;
+      }
+      /**
+       * <code>uint32 unk43 = 43;</code>
+       * @param value The unk43 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk43(int value) {
+        
+        unk43_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 unk43 = 43;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk43() {
+        
+        unk43_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object unk251_ = "";
+      /**
+       * <code>string unk251 = 251;</code>
+       * @return The unk251.
+       */
+      public java.lang.String getUnk251() {
+        java.lang.Object ref = unk251_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          unk251_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string unk251 = 251;</code>
+       * @return The bytes for unk251.
+       */
+      public com.google.protobuf.ByteString
+          getUnk251Bytes() {
+        java.lang.Object ref = unk251_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          unk251_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string unk251 = 251;</code>
+       * @param value The unk251 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk251(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        unk251_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk251 = 251;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk251() {
+        
+        unk251_ = getDefaultInstance().getUnk251();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk251 = 251;</code>
+       * @param value The bytes for unk251 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk251Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        unk251_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object unk307_ = "";
+      /**
+       * <code>string unk307 = 307;</code>
+       * @return The unk307.
+       */
+      public java.lang.String getUnk307() {
+        java.lang.Object ref = unk307_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          unk307_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string unk307 = 307;</code>
+       * @return The bytes for unk307.
+       */
+      public com.google.protobuf.ByteString
+          getUnk307Bytes() {
+        java.lang.Object ref = unk307_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          unk307_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string unk307 = 307;</code>
+       * @param value The unk307 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk307(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        unk307_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk307 = 307;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk307() {
+        
+        unk307_ = getDefaultInstance().getUnk307();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk307 = 307;</code>
+       * @param value The bytes for unk307 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk307Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        unk307_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object field450ClientRandKey_ = "";
+      /**
+       * <pre>
+       * client_rand_key (base64), already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>string field450ClientRandKey = 450;</code>
+       * @return The field450ClientRandKey.
+       */
+      public java.lang.String getField450ClientRandKey() {
+        java.lang.Object ref = field450ClientRandKey_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          field450ClientRandKey_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * client_rand_key (base64), already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>string field450ClientRandKey = 450;</code>
+       * @return The bytes for field450ClientRandKey.
+       */
+      public com.google.protobuf.ByteString
+          getField450ClientRandKeyBytes() {
+        java.lang.Object ref = field450ClientRandKey_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          field450ClientRandKey_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * client_rand_key (base64), already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>string field450ClientRandKey = 450;</code>
+       * @param value The field450ClientRandKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setField450ClientRandKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        field450ClientRandKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * client_rand_key (base64), already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>string field450ClientRandKey = 450;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearField450ClientRandKey() {
+        
+        field450ClientRandKey_ = getDefaultInstance().getField450ClientRandKey();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * client_rand_key (base64), already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>string field450ClientRandKey = 450;</code>
+       * @param value The bytes for field450ClientRandKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setField450ClientRandKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        field450ClientRandKey_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int unk470_ ;
+      /**
+       * <code>uint32 unk470 = 470;</code>
+       * @return The unk470.
+       */
+      @java.lang.Override
+      public int getUnk470() {
+        return unk470_;
+      }
+      /**
+       * <code>uint32 unk470 = 470;</code>
+       * @param value The unk470 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk470(int value) {
+        
+        unk470_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 unk470 = 470;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk470() {
+        
+        unk470_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int field1226KeyId_ ;
+      /**
+       * <pre>
+       * RSA key id, already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>uint32 field1226KeyId = 1226;</code>
+       * @return The field1226KeyId.
+       */
+      @java.lang.Override
+      public int getField1226KeyId() {
+        return field1226KeyId_;
+      }
+      /**
+       * <pre>
+       * RSA key id, already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>uint32 field1226KeyId = 1226;</code>
+       * @param value The field1226KeyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setField1226KeyId(int value) {
+        
+        field1226KeyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * RSA key id, already parsed manually in
+       * HandlerGetPlayerTokenReq.extractKeyExchangeData().
+       * </pre>
+       *
+       * <code>uint32 field1226KeyId = 1226;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearField1226KeyId() {
+        
+        field1226KeyId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object unk1419_ = "";
+      /**
+       * <code>string unk1419 = 1419;</code>
+       * @return The unk1419.
+       */
+      public java.lang.String getUnk1419() {
+        java.lang.Object ref = unk1419_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          unk1419_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string unk1419 = 1419;</code>
+       * @return The bytes for unk1419.
+       */
+      public com.google.protobuf.ByteString
+          getUnk1419Bytes() {
+        java.lang.Object ref = unk1419_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          unk1419_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string unk1419 = 1419;</code>
+       * @param value The unk1419 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk1419(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        unk1419_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk1419 = 1419;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk1419() {
+        
+        unk1419_ = getDefaultInstance().getUnk1419();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string unk1419 = 1419;</code>
+       * @param value The bytes for unk1419 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk1419Bytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        unk1419_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int unk1465_ ;
+      /**
+       * <code>uint32 unk1465 = 1465;</code>
+       * @return The unk1465.
+       */
+      @java.lang.Override
+      public int getUnk1465() {
+        return unk1465_;
+      }
+      /**
+       * <code>uint32 unk1465 = 1465;</code>
+       * @param value The unk1465 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk1465(int value) {
+        
+        unk1465_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 unk1465 = 1465;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk1465() {
+        
+        unk1465_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int unk1548_ ;
+      /**
+       * <code>uint32 unk1548 = 1548;</code>
+       * @return The unk1548.
+       */
+      @java.lang.Override
+      public int getUnk1548() {
+        return unk1548_;
+      }
+      /**
+       * <code>uint32 unk1548 = 1548;</code>
+       * @param value The unk1548 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnk1548(int value) {
+        
+        unk1548_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 unk1548 = 1548;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnk1548() {
+        
+        unk1548_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1589,15 +2629,19 @@ public final class GetPlayerTokenReqOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\027GetPlayerTokenReq.proto\"\225\002\n\021GetPlayerT" +
+      "\n\027GetPlayerTokenReq.proto\"\306\003\n\021GetPlayerT" +
       "okenReq\022\017\n\007isGuest\030\001 \001(\010\022\022\n\naccountUid\030\002" +
       " \001(\014\022\023\n\013accountType\030\003 \001(\r\022\014\n\004unk4\030\004 \001(\010\022" +
       "\014\n\004unk5\030\005 \001(\004\022\014\n\004unk6\030\006 \001(\r\022\014\n\004unk7\030\007 \001(" +
       "\r\022\014\n\004unk8\030\010 \001(\010\022\021\n\tfield9Uid\030\t \001(\t\022\027\n\017fi" +
       "eld10Material\030\n \001(\014\022\r\n\005unk11\030\013 \001(\r\022\r\n\005un" +
       "k12\030\014 \001(\r\022\024\n\014platformType\030\r \001(\r\022\r\n\005unk14" +
-      "\030\016 \001(\010\022\021\n\tchannelId\030\017 \001(\rB\033\n\031emu.grasscu" +
-      "tter.net.protob\006proto3"
+      "\030\016 \001(\010\022\021\n\tchannelId\030\017 \001(\r\022\r\n\005unk43\030+ \001(\r" +
+      "\022\017\n\006unk251\030\373\001 \001(\t\022\017\n\006unk307\030\263\002 \001(\t\022\036\n\025fi" +
+      "eld450ClientRandKey\030\302\003 \001(\t\022\017\n\006unk470\030\326\003 " +
+      "\001(\r\022\027\n\016field1226KeyId\030\312\t \001(\r\022\020\n\007unk1419\030" +
+      "\213\013 \001(\t\022\020\n\007unk1465\030\271\013 \001(\r\022\020\n\007unk1548\030\214\014 \001" +
+      "(\rB\033\n\031emu.grasscutter.net.protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1608,7 +2652,7 @@ public final class GetPlayerTokenReqOuterClass {
     internal_static_GetPlayerTokenReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_GetPlayerTokenReq_descriptor,
-        new java.lang.String[] { "IsGuest", "AccountUid", "AccountType", "Unk4", "Unk5", "Unk6", "Unk7", "Unk8", "Field9Uid", "Field10Material", "Unk11", "Unk12", "PlatformType", "Unk14", "ChannelId", });
+        new java.lang.String[] { "IsGuest", "AccountUid", "AccountType", "Unk4", "Unk5", "Unk6", "Unk7", "Unk8", "Field9Uid", "Field10Material", "Unk11", "Unk12", "PlatformType", "Unk14", "ChannelId", "Unk43", "Unk251", "Unk307", "Field450ClientRandKey", "Unk470", "Field1226KeyId", "Unk1419", "Unk1465", "Unk1548", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
